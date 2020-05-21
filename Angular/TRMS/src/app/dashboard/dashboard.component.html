@@ -15,7 +15,7 @@
     <ul class="col">
       <h4>list for submitted forms</h4>
       <li *ngFor="let item of list">
-        <span><button>Upload</button></span>
+        <span><button>Update</button></span>
         <span><button>View</button></span>
         ID: {{ item.id }} Status: {{ item.status }}
       </li>
@@ -28,3 +28,9 @@
     </ul>
   </div>
 </div>
+<ul class="col">
+  <h4>list for messages</h4>
+  <li *ngFor="let item of testList">
+    ID: {{ item.id }} Message: {{ item.contents }}
+  </li>
+</ul>

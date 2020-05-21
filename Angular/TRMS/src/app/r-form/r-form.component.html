@@ -3,22 +3,19 @@
     <h2>Tuition Reimbursement Form</h2>
 
     <div class="formElement">
-      <label for="firstName">First name</label> <br />
-      <input
-        ngModel
-        minlength="3"
-        required
-        #firstName="ngModel"
-        type="text"
-        name="firstName"
-      />
-      <div *ngIf="firstName.touched && firstName.invalid" class="alert">
-        <div *ngIf="firstName.errors.required">This field is required</div>
-        <div *ngIf="firstName.errors.minlength">
-          Name should be at least
-          {{ firstName.errors.minlength.requiredLength }} characters
-        </div>
-      </div>
+      <p>
+        Employee ID: <span>{{ employee.id }}</span>
+      </p>
+    </div>
+    <div class="formElement">
+      <p>
+        First name: <span>{{ employee.firstName }}</span>
+      </p>
+    </div>
+    <div class="formElement">
+      <p>
+        Last name: <span>{{ employee.lastName }}</span>
+      </p>
     </div>
 
     <div class="row">
@@ -32,8 +29,8 @@
           name="startDate"
           id="startDate"
         />
-        <div *ngIf="lastName.touched && lastName.invalid" class="alert">
-          <div *ngIf="lastName.errors.required">This field is required</div>
+        <div *ngIf="startDate.touched && startDate.invalid" class="alert">
+          <div *ngIf="startDate.errors.required">This field is required</div>
         </div>
       </div>
 
@@ -69,18 +66,36 @@
       </div>
     </div>
 
-    <div class="formElement">
-      <label for="cost">Event cost </label> <br />
-      <input
-        ngModel
-        #cost="ngModel"
-        required
-        type="number"
-        name="cost"
-        id="cost"
-      />
-      <div *ngIf="cost.touched && cost.invalid" class="alert">
-        <div *ngIf="cost.errors.required">This field is required</div>
+    <div class="row">
+      <div class="formElement">
+        <label for="cost">Event cost </label> <br />
+        <input
+          ngModel
+          #cost="ngModel"
+          required
+          type="number"
+          name="cost"
+          id="cost"
+        />
+        <div *ngIf="cost.touched && cost.invalid" class="alert">
+          <div *ngIf="cost.errors.required">This field is required</div>
+        </div>
+      </div>
+      <div class="formElement">
+        <label for="return">Estimated return</label> <br />
+        <input
+          disabled
+          ngModel
+          [placeholder]="total"
+          type="text"
+          #return="ngModel"
+          required
+          name="return"
+          id="return"
+        />
+        <div *ngIf="return.touched && return.invalid" class="alert">
+          <div *ngIf="return.errors.required">This field is required</div>
+        </div>
       </div>
     </div>
 
@@ -94,11 +109,11 @@
           name="gradingFormat"
           id="gradingFormat"
         >
-          <option value="1">one</option>
-          <option value="2">two</option>
-          <option value="3">three</option>
-          <option value="4">four</option>
-          <option value="5">five</option>
+          <option value="1">>90%</option>
+          <option value="2">>80%</option>
+          <option value="3">>70%</option>
+          <option value="4">>60%</option>
+          <option value="5">In description</option>
         </select>
         <div
           *ngIf="gradingFormat.touched && gradingFormat.invalid"
