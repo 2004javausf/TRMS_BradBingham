@@ -21,25 +21,6 @@
       </div>
     </div>
 
-    <div class="formElement">
-      <label for="lastName">Last name</label> <br />
-      <input
-        ngModel
-        minlength="3"
-        required
-        #lastName="ngModel"
-        type="text"
-        name="lastName"
-        id="lastName"
-      />
-      <div *ngIf="lastName.touched && lastName.invalid" class="alert">
-        <div *ngIf="lastName.errors.required">This field is required</div>
-        <div *ngIf="lastName.errors.minlength">
-          Name should be at least
-          {{ firstName.errors.minlength.requiredLength }} characters
-        </div>
-      </div>
-    </div>
     <div class="row">
       <div class="formElement">
         <label for="startDate">Start date </label> <br />
