@@ -1,0 +1,41 @@
+<div class="centerCenter">
+  <Form
+    class="formBox"
+    autocomplete="off"
+    ngForm
+    #f="ngForm"
+    (ngSubmit)="submit(f)"
+  >
+    <h2>Log into TRMS</h2>
+    <div class="formElement">
+      <input
+        ngModel
+        #username="ngModel"
+        required
+        type="text"
+        name="username"
+        placeholder="Username"
+      />
+      <div *ngIf="username.touched && username.invalid" class="alert">
+        <div *ngIf="username.errors.required">This field is required</div>
+      </div>
+    </div>
+
+    <div class="formElement">
+      <input
+        ngModel
+        #password="ngModel"
+        required
+        type="password"
+        name="password"
+        placeholder="Password"
+      />
+      <div *ngIf="password.touched && password.invalid" class="alert">
+        <div *ngIf="password.errors.required">This field is required</div>
+      </div>
+    </div>
+    <div class="formElement">
+      <input [disabled]="!f.valid" type="submit" value="Log in" />
+    </div>
+  </Form>
+</div>

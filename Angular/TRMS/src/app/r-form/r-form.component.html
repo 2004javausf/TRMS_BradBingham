@@ -1,8 +1,207 @@
-<form>
-  <label for="firstName">
-    <input type="text" [(ngModel)]="" />
-  </label>
+<div class="centerCenter">
+  <form #f="ngForm" (ngSubmit)="submit(f)" class="formBox">
+    <h2>Tuition Reimbursement Form</h2>
 
-  <label for="lastName">Last Name</label>
-  <input type="text" name="lastName" id="lastName" />
-</form>
+    <div class="formElement">
+      <label for="firstName">First name</label> <br />
+      <input
+        ngModel
+        minlength="3"
+        required
+        #firstName="ngModel"
+        type="text"
+        name="firstName"
+      />
+      <div *ngIf="firstName.touched && firstName.invalid" class="alert">
+        <div *ngIf="firstName.errors.required">This field is required</div>
+        <div *ngIf="firstName.errors.minlength">
+          Name should be at least
+          {{ firstName.errors.minlength.requiredLength }} characters
+        </div>
+      </div>
+    </div>
+
+    <div class="formElement">
+      <label for="lastName">Last name</label> <br />
+      <input
+        ngModel
+        minlength="3"
+        required
+        #lastName="ngModel"
+        type="text"
+        name="lastName"
+        id="lastName"
+      />
+      <div *ngIf="lastName.touched && lastName.invalid" class="alert">
+        <div *ngIf="lastName.errors.required">This field is required</div>
+        <div *ngIf="lastName.errors.minlength">
+          Name should be at least
+          {{ firstName.errors.minlength.requiredLength }} characters
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="formElement">
+        <label for="startDate">Start date </label> <br />
+        <input
+          ngModel
+          #startDate="ngModel"
+          required
+          type="date"
+          name="startDate"
+          id="startDate"
+        />
+        <div *ngIf="lastName.touched && lastName.invalid" class="alert">
+          <div *ngIf="lastName.errors.required">This field is required</div>
+        </div>
+      </div>
+
+      <div class="formElement">
+        <label for="startTime">Start time </label> <br />
+        <input
+          ngModel
+          #startTime="ngModel"
+          required
+          type="time"
+          name="startTime"
+          id="startTime"
+          pattern="[0-9]{2}:[0-9]{2}"
+        />
+        <div *ngIf="startTime.touched && startTime.invalid" class="alert">
+          <div *ngIf="startTime.errors.required">This field is required</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="formElement">
+      <label for="location">Location </label> <br />
+      <input
+        ngModel
+        #location="ngModel"
+        required
+        type="text"
+        name="location"
+        id="location"
+      />
+      <div *ngIf="location.touched && location.invalid" class="alert">
+        <div *ngIf="location.errors.required">This field is required</div>
+      </div>
+    </div>
+
+    <div class="formElement">
+      <label for="cost">Event cost </label> <br />
+      <input
+        ngModel
+        #cost="ngModel"
+        required
+        type="number"
+        name="cost"
+        id="cost"
+      />
+      <div *ngIf="cost.touched && cost.invalid" class="alert">
+        <div *ngIf="cost.errors.required">This field is required</div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="formElement col">
+        <label for="gradingFormat">Grading Format </label> <br />
+        <select
+          ngModel
+          #gradingFormat="ngModel"
+          required
+          name="gradingFormat"
+          id="gradingFormat"
+        >
+          <option value="1">one</option>
+          <option value="2">two</option>
+          <option value="3">three</option>
+          <option value="4">four</option>
+          <option value="5">five</option>
+        </select>
+        <div
+          *ngIf="gradingFormat.touched && gradingFormat.invalid"
+          class="alert"
+        >
+          <div *ngIf="gradingFormat.errors.required">
+            This field is required
+          </div>
+        </div>
+      </div>
+
+      <div class="formElement col">
+        <label for="eventType">Event type </label> <br />
+        <select
+          ngModel
+          #eventType="ngModel"
+          required
+          name="eventType"
+          id="eventType"
+        >
+          <option value="1">University Course</option>
+          <option value="2">Seminar</option>
+          <option value="3">Certification Prep Class</option>
+          <option value="4">Certification</option>
+          <option value="5">Technical Training</option>
+          <option value="6">Other</option>
+        </select>
+        <div *ngIf="eventType.touched && eventType.invalid" class="alert">
+          <div *ngIf="eventType.errors.required">This field is required</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="formElement">
+      <label for="description">Description </label> <br />
+      <textarea
+        ngModel
+        #description="ngModel"
+        required
+        name="description"
+        id="description"
+        cols="30"
+        rows="5"
+      ></textarea>
+      <div *ngIf="description.touched && description.invalid" class="alert">
+        <div *ngIf="description.errors.required">This field is required</div>
+      </div>
+    </div>
+
+    <div class="formElement">
+      <label for="justification"
+        >Work related justification
+        <textarea
+          ngModel
+          #justification="ngModel"
+          required
+          name="justification"
+          id="justification"
+          cols="30"
+          rows="5"
+        ></textarea>
+      </label>
+      <div *ngIf="justification.touched && justification.invalid" class="alert">
+        <div *ngIf="justification.errors.required">
+          This field is required
+        </div>
+      </div>
+    </div>
+
+    <div class="formElement">
+      <div id="optionalInfo">
+        <label for="attachment"
+          >(optional) attachment
+          <input type="file" name="attachment" id="attachment" />
+        </label>
+      </div>
+    </div>
+
+    <div class="formElement">
+      <input
+        [disabled]="!f.valid"
+        type="submit"
+        value="Submit form for review"
+      />
+    </div>
+  </form>
+</div>

@@ -1,0 +1,30 @@
+<div class="dashboardBox">
+  <h3>Tuition Reimbursement Management System</h3>
+  <div class="header row">
+    <div class="col">
+      <h4>welcome {{ user.firstName }}</h4>
+      <a href="">Fill out new form</a>
+      <a href="">Exit</a>
+    </div>
+    <div class="infoBox col">
+      <p>available amount ${{ user.available }}</p>
+    </div>
+  </div>
+  <hr />
+  <div class="row">
+    <ul class="col">
+      <h4>list for submitted forms</h4>
+      <li *ngFor="let item of list">
+        <span><button>Upload</button></span>
+        <span><button>View</button></span>
+        ID: {{ item.id }} Status: {{ item.status }}
+      </li>
+    </ul>
+    <ul class="col">
+      <h4>list for messages</h4>
+      <li *ngFor="let item of messages">
+        ID: {{ item.id }} From: {{ item.sender }} Message: {{ item.message }}
+      </li>
+    </ul>
+  </div>
+</div>

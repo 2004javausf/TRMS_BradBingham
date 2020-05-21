@@ -9,4 +9,8 @@ export class RFormComponent implements OnInit {
   constructor() {}
 
   ngOnInit(): void {}
+  submit(f) {
+    //f.value sends json object
+    console.log(f.value);
+  }
 }

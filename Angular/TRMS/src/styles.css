@@ -1,24 +1,59 @@
-h1 {
-  color: #369;
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 250%;
-}
-h2,
-h3 {
-  color: #444;
-  font-family: Arial, Helvetica, sans-serif;
-  font-weight: lighter;
-}
-body {
-  margin: 2em;
-}
-body,
-input[type="text"],
-button {
-  color: #333;
-  font-family: Cambria, Georgia;
-}
-/* everywhere else */
 * {
+  margin: 0;
+  padding: 0px;
+  box-sizing: border-box;
   font-family: Arial, Helvetica, sans-serif;
+}
+
+.centerCenter {
+  height: 80vh;
+  display: grid;
+  justify-items: center;
+  align-items: center;
+}
+.formBox {
+  border: 1px solid black;
+  width: 400px;
+  padding: 10px;
+}
+h2 {
+  text-align: center;
+}
+input,
+textarea,
+.formElement,
+select,
+.header,
+ul {
+  width: 100%;
+  padding: 5px;
+  resize: none;
+}
+.row {
+  display: flex;
+}
+.col {
+  width: 50%;
+}
+.alert {
+  background-color: rgb(204, 107, 107);
+  padding: 5px;
+}
+.dashboardBox {
+  max-width: 800px;
+  margin: auto;
+}
+.header {
+  margin: auto;
+}
+a {
+  padding-right: 10px;
+}
+.infoBox {
+  display: grid;
+  justify-items: center;
+  align-items: center;
+}
+ul {
+  list-style: none;
 }
