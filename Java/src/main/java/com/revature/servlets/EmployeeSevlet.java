@@ -11,26 +11,24 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.revature.beans.RForm;
-import com.revature.daoimpl.RFormDAOImpl;
+import com.revature.beans.Employee;
+import com.revature.daoimpl.EmployeeDAOImpl;
 
-/**
- * Servlet implementation class RFormServlet
- */
-public class RFormServlet extends HttpServlet {
+
+public class EmployeeSevlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		System.out.println("In doGet ReinbursementFormServlet");
+		System.out.println("In doGet EmployeeServlet");
 		ObjectMapper mapper = new ObjectMapper();
-		RFormDAOImpl rdi = new RFormDAOImpl();
+		EmployeeDAOImpl edi = new EmployeeDAOImpl();
 		PrintWriter pw = response.getWriter();
-		String rfJSON;
+		String emJSON;
 		try {
-			rfJSON = mapper.writeValueAsString(rdi.getFormList());
+			emJSON = mapper.writeValueAsString(edi.getEmployeeList());
 			response.setContentType("application/json");
 			response.setCharacterEncoding("UTF-8");
-			pw.print(rfJSON);
+			pw.print(emJSON);
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		} catch (SQLException e) {
@@ -39,22 +37,23 @@ public class RFormServlet extends HttpServlet {
 		pw.flush();
 	}
 
+	
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		System.out.println("In doPost ReinbursementFormServlet");
-				RForm rf = null;
-				ObjectMapper mapper = new ObjectMapper();
-				//convert JSON to java object
-				rf = mapper.readValue(request.getInputStream(), RForm.class);
-				System.out.println(rf);
-				RFormDAOImpl rdi = new RFormDAOImpl();
-				try {
-					rdi.insertForm(rf);
-					PrintWriter pw = response.getWriter();
-					pw.write("<h3>Added Form</h3>");
-					pw.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
+		System.out.println("In doPost EmployeeServlet");
+		Employee em = null;
+		ObjectMapper mapper = new ObjectMapper();
+		//convert JSON to java object
+		em = mapper.readValue(request.getInputStream(), Employee.class);
+		System.out.println(em);
+		EmployeeDAOImpl edi = new EmployeeDAOImpl();
+		try {
+			edi.insertEmployee(em);
+			PrintWriter pw = response.getWriter();
+			pw.write("<h3>Added Employee</h3>");
+			pw.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

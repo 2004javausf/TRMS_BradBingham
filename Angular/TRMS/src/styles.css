@@ -19,6 +19,9 @@
 h2 {
   text-align: center;
 }
+h3 {
+  padding-top: 20px;
+}
 input,
 textarea,
 .formElement,
@@ -56,4 +59,19 @@ a {
 }
 ul {
   list-style: none;
+}
+.listTitle {
+  border: 1px solid black;
+  background-color: lightgray;
+}
+.btnBox {
+  width: 100px;
+  float: left;
+}
+
+button {
+  width: 50%;
+}
+li {
+  border: 1px solid black;
 }

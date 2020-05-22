@@ -8,8 +8,6 @@ import { RFormComponent } from "./r-form/r-form.component";
 import { LoginComponent } from "./login/login.component";
 import { DashboardComponent } from "./dashboard/dashboard.component";
 import { FormDetailsComponent } from "./form-details/form-details.component";
-import { TestFormComponent } from "./test-form/test-form.component";
-import { HttpClientModule } from "@angular/common/http";
 
 @NgModule({
   declarations: [
@@ -18,14 +16,12 @@ import { HttpClientModule } from "@angular/common/http";
     LoginComponent,
     DashboardComponent,
     FormDetailsComponent,
-    TestFormComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     FormsModule,
     ReactiveFormsModule,
-    HttpClientModule,
     RouterModule.forRoot([
       { path: "", component: LoginComponent },
       { path: "form", component: RFormComponent },

@@ -1,6 +1,5 @@
 import { HttpClient } from "@angular/common/http";
 import { TestFormService } from "./../test-form.service";
-import { testForm } from "./../test-form/test";
 import { Component, OnInit } from "@angular/core";
 
 @Component({
@@ -9,7 +8,6 @@ import { Component, OnInit } from "@angular/core";
   styleUrls: ["./dashboard.component.css"],
 })
 export class DashboardComponent implements OnInit {
-  private url = "http://localhost:8080/TRMS/rform";
   testList: any;
   user = {
     firstName: "Brad",
@@ -26,12 +24,12 @@ export class DashboardComponent implements OnInit {
     { id: 2, sender: "Jessica", message: "Please provide more" },
     { id: 3, sender: "Franklin", message: "id 1 approved" },
   ];
-
-  constructor(private http: HttpClient) {
-    this.http.get(this.url).subscribe((res) => {
-      this.testList = res;
-    });
-  }
+  // private url = "http://localhost:8080/TRMS/rform";
+  // constructor(private http: HttpClient) {
+  //   this.http.get(this.url).subscribe((res) => {
+  //     this.testList = res;
+  //   });
+  // }
 
   ngOnInit(): void {}
 }

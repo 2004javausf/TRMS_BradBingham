@@ -11,4 +11,24 @@
     <servlet-name>RFormServlet</servlet-name>
     <url-pattern>/rform</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>MessageServlet</display-name>
+    <servlet-name>MessageServlet</servlet-name>
+    <servlet-class>com.revature.servlets.MessageServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>MessageServlet</servlet-name>
+    <url-pattern>/message</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>EmployeeSevlet</display-name>
+    <servlet-name>EmployeeSevlet</servlet-name>
+    <servlet-class>com.revature.servlets.EmployeeSevlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>EmployeeSevlet</servlet-name>
+    <url-pattern>/employee</url-pattern>
+  </servlet-mapping>
 </web-app>

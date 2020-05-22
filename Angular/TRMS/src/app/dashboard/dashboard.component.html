@@ -2,7 +2,7 @@
   <h3>Tuition Reimbursement Management System</h3>
   <div class="header row">
     <div class="col">
-      <h4>welcome {{ user.firstName }}</h4>
+      <h4>Welcome {{ user.firstName }}</h4>
       <a href="">Fill out new form</a>
       <a href="">Exit</a>
     </div>
@@ -13,24 +13,19 @@
   <hr />
   <div class="row">
     <ul class="col">
-      <h4>list for submitted forms</h4>
+      <h4 class="listTitle">list for submitted forms</h4>
       <li *ngFor="let item of list">
-        <span><button>Update</button></span>
-        <span><button>View</button></span>
-        ID: {{ item.id }} Status: {{ item.status }}
+        <div class="btnBox"><button>Update</button><button>View</button></div>
+        <div class="msgBox">
+          FormID: {{ item.id }} Status: {{ item.status }}
+        </div>
       </li>
     </ul>
     <ul class="col">
-      <h4>list for messages</h4>
+      <h4 class="listTitle">list for messages</h4>
       <li *ngFor="let item of messages">
         ID: {{ item.id }} From: {{ item.sender }} Message: {{ item.message }}
       </li>
     </ul>
   </div>
 </div>
-<ul class="col">
-  <h4>list for messages</h4>
-  <li *ngFor="let item of testList">
-    ID: {{ item.id }} Message: {{ item.contents }}
-  </li>
-</ul>
