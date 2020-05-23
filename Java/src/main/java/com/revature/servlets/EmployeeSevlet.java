@@ -20,21 +20,35 @@ public class EmployeeSevlet extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		System.out.println("In doGet EmployeeServlet");
+		String filter = request.getPathInfo().substring(1);
+		
 		ObjectMapper mapper = new ObjectMapper();
 		EmployeeDAOImpl edi = new EmployeeDAOImpl();
 		PrintWriter pw = response.getWriter();
 		String emJSON;
-		try {
-			emJSON = mapper.writeValueAsString(edi.getEmployeeList());
-			response.setContentType("application/json");
-			response.setCharacterEncoding("UTF-8");
-			pw.print(emJSON);
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-		} catch (SQLException e) {
-			e.printStackTrace();
+		if(filter.equals("")) {
+			try {
+				emJSON = mapper.writeValueAsString(edi.getEmployeeList());
+				response.setContentType("application/json");
+				response.setCharacterEncoding("UTF-8");
+				pw.print(emJSON);
+			} catch (JsonProcessingException e) {
+				e.printStackTrace();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			pw.flush();
+		} else {
+			try {
+				emJSON = mapper.writeValueAsString(edi.getEmployeeBy(filter));
+				response.setContentType("application/json");
+				response.setCharacterEncoding("UTF-8");
+				pw.print(emJSON);
+			} catch (JsonProcessingException e) {
+				e.printStackTrace();
+			}
+			pw.flush();
 		}
-		pw.flush();
 	}
 
 	
@@ -51,6 +65,7 @@ public class EmployeeSevlet extends HttpServlet {
 			PrintWriter pw = response.getWriter();
 			pw.write("<h3>Added Employee</h3>");
 			pw.close();
+			response.setStatus(201);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

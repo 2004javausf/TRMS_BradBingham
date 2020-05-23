@@ -14,9 +14,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.revature.beans.RForm;
 import com.revature.daoimpl.RFormDAOImpl;
 
-/**
- * Servlet implementation class RFormServlet
- */
+
 public class RFormServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 

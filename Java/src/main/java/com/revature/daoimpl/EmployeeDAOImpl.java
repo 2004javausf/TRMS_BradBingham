@@ -53,4 +53,28 @@ public class EmployeeDAOImpl implements EmployeeDAO {
 		return eList;
 	}
 
+	public Employee getEmployeeBy(String filter) {
+		String sql = "SELECT * FROM EMPLOYEES WHERE FIRST_NAME ='"+filter+"'";
+		Connection conn = cf.getConnection();
+		Employee e = null;
+		try {
+			Statement stmt = conn.createStatement();
+			ResultSet rs = stmt.executeQuery(sql);
+			rs.next();
+			e = new Employee(
+					rs.getInt(1),
+					rs.getString(2),
+					rs.getString(3),
+					rs.getDouble(4),
+					rs.getString(5),
+					rs.getString(6),
+					rs.getString(7)
+					);
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		return e;
+	}
+
 }

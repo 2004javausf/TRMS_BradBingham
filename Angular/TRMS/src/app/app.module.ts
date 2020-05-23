@@ -1,3 +1,4 @@
+import { HttpClient, HttpClientModule } from "@angular/common/http";
 import { RouterModule } from "@angular/router";
 import { BrowserModule } from "@angular/platform-browser";
 import { NgModule } from "@angular/core";
@@ -22,6 +23,7 @@ import { FormDetailsComponent } from "./form-details/form-details.component";
     AppRoutingModule,
     FormsModule,
     ReactiveFormsModule,
+    HttpClientModule,
     RouterModule.forRoot([
       { path: "", component: LoginComponent },
       { path: "form", component: RFormComponent },
