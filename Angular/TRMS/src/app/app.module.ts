@@ -24,10 +24,7 @@ import { FormDetailsComponent } from "./form-details/form-details.component";
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
-    RouterModule.forRoot([
-      { path: "", component: LoginComponent },
-      { path: "form", component: RFormComponent },
-    ]),
+    RouterModule.forRoot([]),
   ],
   providers: [],
   bootstrap: [AppComponent],

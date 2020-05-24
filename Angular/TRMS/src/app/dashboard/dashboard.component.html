@@ -3,19 +3,23 @@
   <div class="header row">
     <div class="col">
       <h4>Welcome {{ user.firstName }}</h4>
-      <a href="">Fill out new form</a>
-      <a href="">Exit</a>
+      <a (click)="displayChange('forms')">My Forms</a>
+      <a (click)="displayChange('newForm')">New Form</a>
     </div>
     <div class="infoBox col">
-      <p>available amount ${{ user.available }}</p>
+      <p>available amount ${{ user.availableAmount }}</p>
     </div>
   </div>
   <hr />
-  <div class="row">
+  <!-- myforms -->
+  <div *ngIf="display == 'forms'" class="row">
     <ul class="col">
       <h4 class="listTitle">list for submitted forms</h4>
-      <li *ngFor="let item of list">
-        <div class="btnBox"><button>Update</button><button>View</button></div>
+      <li *ngIf="!forms">No messages</li>
+      <li *ngFor="let item of forms">
+        <div class="btnBox">
+          <button (click)="focusOn(item)">View</button>
+        </div>
         <div class="msgBox">
           FormID: {{ item.id }} Status: {{ item.status }}
         </div>
@@ -23,9 +27,118 @@
     </ul>
     <ul class="col">
       <h4 class="listTitle">list for messages</h4>
+      <li *ngIf="!messages">No messages</li>
       <li *ngFor="let item of messages">
         {{ item.message }}
       </li>
     </ul>
   </div>
+  <!-- focus form -->
+  <div *ngIf="display == 'focus'">
+    <div class="centerCenter">
+      <form class="formBox">
+        <h2>Tuition Reimbursement Form</h2>
+
+        <div class="formElement">
+          <p>Employee ID: <span></span></p>
+        </div>
+        <div class="formElement">
+          <p>First name: <span></span></p>
+        </div>
+        <div class="formElement">
+          <p>Last name: <span></span></p>
+        </div>
+
+        <div class="row">
+          <div class="formElement">
+            <label for="startDate">Start date </label> <br />
+            <input disabled [value]="focus.startDate" />
+          </div>
+
+          <div class="formElement">
+            <label for="startTime">Start time </label> <br />
+            <input disabled [value]="focus.startTime" />
+          </div>
+        </div>
+
+        <div class="formElement">
+          <label for="location">Location </label> <br />
+          <input disabled [value]="focus.location" />
+        </div>
+
+        <div class="row">
+          <div class="formElement">
+            <label for="cost">Event cost </label> <br />
+            <input disabled [value]="focus.cost" />
+          </div>
+          <div class="formElement">
+            <label for="return">Estimated return</label> <br />
+            <input disabled [value]="focus.cost" />
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="formElement col">
+            <label for="gradingFormat">Grading Format </label> <br />
+            <select>
+              <option value="1">Pass/Fail</option>
+              <option value="2">>80%</option>
+              <option value="3">>70%</option>
+              <option value="4">Presentation</option>
+              <option value="5">in description</option>
+            </select>
+          </div>
+
+          <div class="formElement col">
+            <label for="eventType">Event type </label> <br />
+            <select>
+              <option value="1">University Course</option>
+              <option value="2">Seminar</option>
+              <option value="3">Certification Prep Class</option>
+              <option value="4">Certification</option>
+              <option value="5">Technical Training</option>
+              <option value="6">Other</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="formElement">
+          <label for="description">Description </label> <br />
+          <textarea
+            disabled
+            [placeholder]="focus.description"
+            cols="30"
+            rows="5"
+          ></textarea>
+        </div>
+
+        <div class="formElement">
+          <label for="justification"
+            >Work related justification
+            <textarea
+              disabled
+              [placeholder]="focus.justification"
+              cols="30"
+              rows="5"
+            ></textarea>
+          </label>
+        </div>
+
+        <div class="formElement">
+          <div id="optionalInfo">
+            <label for="attachment"
+              >(optional) attachment
+              <input type="file" name="attachment" id="attachment" />
+            </label>
+          </div>
+        </div>
+
+        <div class="formElement">
+          <input disabled type="submit" value="Submit form for review" />
+        </div>
+      </form>
+    </div>
+  </div>
+  <!-- mew form -->
+  <r-form *ngIf="display == 'newForm'"> </r-form>
 </div>

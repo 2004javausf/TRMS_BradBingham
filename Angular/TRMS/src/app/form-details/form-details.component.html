@@ -1,1 +1,5 @@
-<p>form-details works!</p>
+<div *ngIf="!form">No such form</div>
+<div *ngIf="form">
+  {{ form.id }}
+  {{ form.status }}
+</div>

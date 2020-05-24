@@ -1,6 +1,10 @@
+import { RformService } from "./../rform.service";
+import { EmployeeService } from "./../employee.service";
+import { Employee } from "./../templates/employee";
 import { Message } from "./../templates/message";
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, Input } from "@angular/core";
 import { MessageService } from "../message.service";
+import { Rform } from "../templates/rform";
 
 @Component({
   selector: "dashboard",
@@ -8,23 +12,38 @@ import { MessageService } from "../message.service";
   styleUrls: ["./dashboard.component.css"],
 })
 export class DashboardComponent implements OnInit {
-  private url = "http://localhost:8080/TRMS/message";
-  messages: Message[];
-
-  user = {
+  display = "forms";
+  user: any = {
     firstName: "Brad",
-    available: 1000,
   };
-  list = [
-    { id: 1, status: "in-review" },
-    { id: 2, status: "in-review" },
-    { id: 3, status: "Pending" },
-    { id: 4, status: "Accepted" },
-  ];
 
-  constructor(private messageService: MessageService) {}
+  displayChange(toThis) {
+    this.display = toThis;
+  }
+  //myforms comoponent
+  messages: Message[];
+  focus: Rform;
+  focusEmployee: Employee;
+  forms: Rform[];
+
+  focusOn(item) {
+    console.log(item);
+    this.displayChange("focus");
+    this.focus = item;
+  }
+  goBack() {}
+  //focus form comp
+  constructor(
+    private messageService: MessageService,
+    private employeeService: EmployeeService,
+    private rformService: RformService
+  ) {}
 
   ngOnInit(): void {
     this.messageService.getMessages().subscribe((res) => (this.messages = res));
+    // this.employeeService
+    //   .getEmployee("Brad")
+    //   .subscribe((res) => (this.user = res));
+    this.rformService.getForms().subscribe((res) => (this.forms = res));
   }
 }
