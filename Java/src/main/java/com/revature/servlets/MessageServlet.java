@@ -18,25 +18,40 @@ import com.revature.daoimpl.MessageDAOImpl;
 
 public class MessageServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		System.out.println("In doGet MessageServlet");
+		String filter = request.getPathInfo().substring(1);
+		
 		ObjectMapper mapper = new ObjectMapper();
 		MessageDAOImpl mdi = new MessageDAOImpl();
 		PrintWriter pw = response.getWriter();
 		String msJSON;
-		try {
-			msJSON = mapper.writeValueAsString(mdi.getMessageList());
-			response.setContentType("application/json");
-			response.setCharacterEncoding("UTF-8");
-			pw.print(msJSON);
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-		} catch (SQLException e) {
-			e.printStackTrace();
+		if(filter.equals("")) {
+			try {
+				msJSON = mapper.writeValueAsString(mdi.getMessageList());
+				response.setContentType("application/json");
+				response.setCharacterEncoding("UTF-8");
+				pw.print(msJSON);
+			} catch (JsonProcessingException e) {
+				e.printStackTrace();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			pw.flush();			
+		} else {
+			try {
+				msJSON = mapper.writeValueAsString(mdi.getMessagesById(Integer.parseInt(filter)));
+				response.setContentType("application/json");
+				response.setCharacterEncoding("UTF-8");
+				pw.print(msJSON);
+			} catch (JsonProcessingException | NumberFormatException | SQLException e) {
+				e.printStackTrace();
+			}
+			pw.flush();
 		}
-		pw.flush();
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)

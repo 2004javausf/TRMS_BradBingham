@@ -7,9 +7,12 @@ import { Observable } from "rxjs";
   providedIn: "root",
 })
 export class MessageService {
-  private url = "http://localhost:8080/TRMS/message";
+  private url = "http://localhost:8080/TRMS/message/";
   constructor(private http: HttpClient) {}
   getMessages(): Observable<Message[]> {
     return this.http.get<Message[]>(this.url);
+  }
+  getByUserId(id): Observable<Message[]> {
+    return this.http.get<Message[]>(this.url + id);
   }
 }

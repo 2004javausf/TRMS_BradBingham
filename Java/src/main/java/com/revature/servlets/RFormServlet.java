@@ -20,21 +20,36 @@ public class RFormServlet extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		System.out.println("In doGet ReinbursementFormServlet");
+		String filter = request.getPathInfo().substring(1);
+		
 		ObjectMapper mapper = new ObjectMapper();
 		RFormDAOImpl rdi = new RFormDAOImpl();
 		PrintWriter pw = response.getWriter();
 		String rfJSON;
-		try {
-			rfJSON = mapper.writeValueAsString(rdi.getFormList());
-			response.setContentType("application/json");
-			response.setCharacterEncoding("UTF-8");
-			pw.print(rfJSON);
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-		} catch (SQLException e) {
-			e.printStackTrace();
+		if(filter.equals("")) {
+			try {
+				rfJSON = mapper.writeValueAsString(rdi.getFormList());
+				response.setContentType("application/json");
+				response.setCharacterEncoding("UTF-8");
+				pw.print(rfJSON);
+			} catch (JsonProcessingException e) {
+				e.printStackTrace();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			pw.flush();			
+		} else {
+			try {
+				rfJSON = mapper.writeValueAsString(rdi.getFormsById(Integer.parseInt(filter)));
+				response.setContentType("application/json");
+				response.setCharacterEncoding("UTF-8");
+				pw.print(rfJSON);
+			} catch (NumberFormatException | JsonProcessingException | SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			pw.flush();
 		}
-		pw.flush();
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

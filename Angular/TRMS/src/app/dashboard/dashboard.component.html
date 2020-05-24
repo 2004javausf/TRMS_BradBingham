@@ -1,10 +1,54 @@
-<div class="dashboardBox">
+<!-- login component -->
+<div *ngIf="display == 'login'" class="centerCenter">
+  <Form
+    class="formBox"
+    autocomplete="off"
+    ngForm
+    #fl="ngForm"
+    (ngSubmit)="submit(fl)"
+  >
+    <h2>Log into TRMS</h2>
+    <div class="formElement">
+      <input
+        ngModel
+        #username="ngModel"
+        required
+        type="text"
+        name="username"
+        placeholder="Username"
+      />
+      <div *ngIf="username.touched && username.invalid" class="alert">
+        <div *ngIf="username.errors.required">This field is required</div>
+      </div>
+    </div>
+
+    <div class="formElement">
+      <input
+        ngModel
+        #password="ngModel"
+        required
+        type="password"
+        name="password"
+        placeholder="Password"
+      />
+      <div *ngIf="password.touched && password.invalid" class="alert">
+        <div *ngIf="password.errors.required">This field is required</div>
+      </div>
+    </div>
+    <div class="formElement">
+      <input type="submit" [disabled]="!fl.valid" value="Log in" />
+    </div>
+  </Form>
+</div>
+<!-- dashboard component -->
+<div *ngIf="display != 'login'" class="dashboardBox">
   <h3>Tuition Reimbursement Management System</h3>
   <div class="header row">
     <div class="col">
       <h4>Welcome {{ user.firstName }}</h4>
       <a (click)="displayChange('forms')">My Forms</a>
       <a (click)="displayChange('newForm')">New Form</a>
+      <a (click)="displayChange('login')">Log out</a>
     </div>
     <div class="infoBox col">
       <p>available amount ${{ user.availableAmount }}</p>
@@ -21,7 +65,7 @@
           <button (click)="focusOn(item)">View</button>
         </div>
         <div class="msgBox">
-          FormID: {{ item.id }} Status: {{ item.status }}
+          FormID: {{ item.ID }} Status: {{ item.status }}
         </div>
       </li>
     </ul>
@@ -80,25 +124,16 @@
         <div class="row">
           <div class="formElement col">
             <label for="gradingFormat">Grading Format </label> <br />
-            <select>
-              <option value="1">Pass/Fail</option>
-              <option value="2">>80%</option>
-              <option value="3">>70%</option>
-              <option value="4">Presentation</option>
-              <option value="5">in description</option>
-            </select>
+            <input
+              disabled
+              [value]="gradingFormat(focus.gradeFormatID)"
+              type="text"
+            />
           </div>
 
           <div class="formElement col">
             <label for="eventType">Event type </label> <br />
-            <select>
-              <option value="1">University Course</option>
-              <option value="2">Seminar</option>
-              <option value="3">Certification Prep Class</option>
-              <option value="4">Certification</option>
-              <option value="5">Technical Training</option>
-              <option value="6">Other</option>
-            </select>
+            <input disabled [value]="focus.eventType" type="text" />
           </div>
         </div>
 
@@ -126,15 +161,16 @@
 
         <div class="formElement">
           <div id="optionalInfo">
-            <label for="attachment"
-              >(optional) attachment
-              <input type="file" name="attachment" id="attachment" />
+            <label for="attachment">
+              attachment
+              <a *ngIf="focus.onSubmit" href="#">This file</a>
+              <div *ngIf="!focus.onSubmit">Nothing</div>
             </label>
           </div>
         </div>
 
         <div class="formElement">
-          <input disabled type="submit" value="Submit form for review" />
+          <button>Submit Final Grade</button>
         </div>
       </form>
     </div>

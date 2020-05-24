@@ -11,4 +11,6 @@ public interface RFormDAO {
 	
 	public List<RForm> getFormList() throws SQLException;
 	
+	public List<RForm> getFormsById(int id) throws SQLException;
+	
 }

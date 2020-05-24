@@ -52,5 +52,27 @@ public class MessageDAOImpl implements MessageDAO {
 		}
 		return mList;
 	}
-
+	
+	
+			@Override
+			public List<Message> getMessagesById(int id) throws SQLException {
+				String sql = "SELECT * FROM MESSAGES WHERE RECIPIANT_EMPLOYEE_ID ="+id;
+				Connection conn = cf.getConnection();
+				Statement stmt = conn.createStatement();
+				ResultSet rs = stmt.executeQuery(sql);
+				Message m = null;
+				ArrayList<Message> mList = new ArrayList<>();
+				while (rs.next()) {
+					m = new Message(
+							rs.getInt(1),
+							rs.getString(2),
+							rs.getInt(3),
+							rs.getInt(4),
+							rs.getInt(5),
+							rs.getString(6)
+							);
+					mList.add(m);
+				}
+				return mList;
+			}
 }

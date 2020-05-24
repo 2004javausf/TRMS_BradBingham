@@ -57,18 +57,19 @@ public class EmployeeSevlet extends HttpServlet {
 		Employee em = null;
 		ObjectMapper mapper = new ObjectMapper();
 		//convert JSON to java object
-		em = mapper.readValue(request.getInputStream(), Employee.class);
-		System.out.println(em);
+		em = mapper.readValue(request.getInputStream(),Employee.class);
 		EmployeeDAOImpl edi = new EmployeeDAOImpl();
-		try {
-			edi.insertEmployee(em);
-			PrintWriter pw = response.getWriter();
-			pw.write("<h3>Added Employee</h3>");
+		Employee checkEm = edi.getEmployeeBy(em.getUsername());
+		PrintWriter pw = response.getWriter();
+		if(checkEm.getPassword().equals(em.getPassword())) {
+			String emJSON = mapper.writeValueAsString(checkEm);
+			pw.write(emJSON);
 			pw.close();
-			response.setStatus(201);
-		} catch (SQLException e) {
-			e.printStackTrace();
+			response.setStatus(201);			
 		}
+		pw.write("Incorrect Username or Password");
+		pw.close();
+		
 	}
 
 }

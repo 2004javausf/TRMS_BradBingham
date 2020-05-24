@@ -10,13 +10,15 @@ GRANT create session TO trms;
 GRANT create table TO trms;
 GRANT create view TO trms;
 
-conn trms/p4ssw0rd
+conn trms/p4ssw0rd;
 -------------------------------------------------
 --TABLES
 CREATE TABLE EMPLOYEES(
 ID INT PRIMARY KEY,
 FIRST_NAME VARCHAR2(30),
 LAST_NAME VARCHAR2(30),
+USERNAME VARCHAR2(20),
+PASSWORD VARCHAR2(20),
 AVAILABLE_AMOUNT NUMBER,
 TITLE VARCHAR2(20),
 DEPARTMENT VARCHAR2(20),
@@ -75,16 +77,19 @@ INSERT INTO GRADING_FORMAT VALUES(4,'Presentation');
 INSERT INTO GRADING_FORMAT VALUES(5,'In description');
 ------------------------------------
 --PROCEEDURES
+
 CREATE OR REPLACE PROCEDURE INSERT_EMPLOYEE
 (FIRST_NAME VARCHAR2,
 LAST_NAME VARCHAR2,
+USERNAME VARCHAR2,
+PASS VARCHAR2,
 AVAILABLE_AMOUNT NUMBER,
 TITLE VARCHAR2,
 DEPARTMENT VARCHAR2,
 OFFICE_LOC VARCHAR2)
 AS
 BEGIN
-    INSERT INTO EMPLOYEES VALUES(EMPLOYEE_SEQ.NEXTVAL,FIRST_NAME,LAST_NAME,AVAILABLE_AMOUNT,TITLE,DEPARTMENT,OFFICE_LOC);
+    INSERT INTO EMPLOYEES VALUES(EMPLOYEE_SEQ.NEXTVAL,FIRST_NAME,LAST_NAME,USERNAME,PASS,AVAILABLE_AMOUNT,TITLE,DEPARTMENT,OFFICE_LOC);
     COMMIT;
 END;
 /
@@ -190,14 +195,14 @@ TRUNCATE TABLE EMPLOYEES;
 DROP SEQUENCE EMPLOYEE_SEQ;
 CREATE SEQUENCE EMPLOYEE_SEQ
   INCREMENT BY 1 MAXVALUE 5000 CYCLE;
-EXECUTE INSERT_EMPLOYEE('Barry','Bingham',1000,'Head','Management','Main');
-EXECUTE INSERT_EMPLOYEE('Dolores','Bingham',1000,'Supervisor','IT','Main');
-EXECUTE INSERT_EMPLOYEE('Kelly','Norton',1000,'Supervisor','Sales','Main');
-EXECUTE INSERT_EMPLOYEE('Lynell','Erickson',1000,'Associate','IT','Main');
-EXECUTE INSERT_EMPLOYEE('Jarem','Bingham',1000,'Associate','IT','Main');
-EXECUTE INSERT_EMPLOYEE('Cody','Bingham',1000,'Associate','Sales','Main');
-EXECUTE INSERT_EMPLOYEE('Bren','Perrine',1000,'Associate','Sales','East');
-EXECUTE INSERT_EMPLOYEE('Brad','Bingham',1000,'Associate','Sales','Main');
+EXECUTE INSERT_EMPLOYEE('UserOne','LastNm','User1','Password1',1000,'Head','Management','Main');
+EXECUTE INSERT_EMPLOYEE('UserTwo','LastNm','User2','Password2',900,'Supervisor','IT','Main');
+EXECUTE INSERT_EMPLOYEE('UserThree','LastNm','User3','Password3',800,'Associate','IT','Main');
+EXECUTE INSERT_EMPLOYEE('UserFour','LastNm','User4','Password4',700,'Associate','IT','Main');
+EXECUTE INSERT_EMPLOYEE('UserFive','LastNm','User5','Password5',600,'Supervisor','Sales','Main');
+EXECUTE INSERT_EMPLOYEE('UserSix','LastNm','User6','Password6',500,'Associate','Sales','Main');
+EXECUTE INSERT_EMPLOYEE('UserSeven','LastNm','User7','Password7',400,'Associate','Sales','Main');
+EXECUTE INSERT_EMPLOYEE('UserEight','LastNm','User8','Password8',300,'Associate','Sales','East');
 
 
 --EMPLOYEE_ID NUMBER,START_DATE DATE,START_TIME VARCHAR2,EVENT_LOCATION VARCHAR2,EVENT_COST NUMBER,
@@ -206,22 +211,28 @@ TRUNCATE TABLE R_FORMS;
 DROP SEQUENCE R_FORM_SEQ;
 CREATE SEQUENCE R_FORM_SEQ
   INCREMENT BY 1 MAXVALUE 5000 CYCLE;
-EXECUTE INSERT_R_FORM(8,'20-JULY-2020','12 AM','Barber School',300,'School for barbers','I will cut your hair',1,'Certification',NULL);
-EXECUTE INSERT_R_FORM(5,'13-JUNE-2020','6 AM','Plumbing School',600,'School for plumbers','I will plumb',1,'Certification Prep',NULL);
-EXECUTE INSERT_R_FORM(6,'01-MAY-2020','5 PM','Pharmacy School',400,'School for pharmTechs','I will do pharmacy',1,'College Course',NULL);
-
+EXECUTE INSERT_R_FORM(1,'01-MAY-2021','1 AM','Leader School',1000,'School for leader','I will lead better',1,'University Course',NULL);
+EXECUTE INSERT_R_FORM(2,'01-MAY-2021','2 AM','Supervisor Seminar',900,'Seminar for Supervisors','It will help',2,'Seminar',NULL);
+EXECUTE INSERT_R_FORM(3,'01-MAY-2021','3 PM','Associate prep class',800,'Prep class for associates','It will help',3,'Certification Prep Class',NULL);
+EXECUTE INSERT_R_FORM(3,'01-MAY-2021','4 PM','Associate Certification',600,'Certification for Associates','It will help',4,'Certification',NULL);
+EXECUTE INSERT_R_FORM(3,'01-MAY-2021','5 PM','Associate Technical Training',500,'Technical Training for Associates','It will help',5,'Technical Training',NULL);
+EXECUTE INSERT_R_FORM(3,'01-MAY-2021','6 PM','Associate therapy',400,'Therapy for Associates','It will help',5,'Other',NULL);
 
 --SENDER_EMPLOYEE_ID NUMBER,RECIPIANT_EMPLOYEE_ID NUMBER,R_FORM_ID NUMBER,MESSAGE VARCHAR2
 TRUNCATE TABLE MESSAGES;
 DROP SEQUENCE MESSAGE_SEQ;
 CREATE SEQUENCE MESSAGE_SEQ
   INCREMENT BY 1 MAXVALUE 5000 CYCLE;
-EXECUTE INSERT_MESSAGE(3,6,3,'I need more info on stuff');
-EXECUTE INSERT_MESSAGE(2,5,2,'You are too vauge');
-EXECUTE INSERT_MESSAGE(1,3,1,'Find out more about Brad');
+EXECUTE INSERT_MESSAGE(2,3,4,'message one from User2');
+EXECUTE INSERT_MESSAGE(0,3,3,'message two from System');
+EXECUTE INSERT_MESSAGE(3,2,4,'message three from User3');
+EXECUTE INSERT_MESSAGE(1,2,3,'message four from User1');
+EXECUTE INSERT_MESSAGE(0,2,3,'message five from System');
+EXECUTE INSERT_MESSAGE(2,1,4,'message six from User2');
+EXECUTE INSERT_MESSAGE(0,1,3,'message seven from System');
 -----------------------------------------------------------
 --VIEWS
 CREATE VIEW MYVIEW AS
     SELECT * FROM R_FORMS
     INNER JOIN GRADING_FORMAT ON  R_FORMS.GRADING_FORMAT_ID = grading_format.id;
-SELECT * FROM EMPLOYEES WHERE ID = 1;
+SELECT * FROM R_FORMS WHERE EMPLOYEE_ID = 1;

@@ -4,18 +4,21 @@ public class Employee {
 	private int ID;
 	private String firstName;
 	private String lastName;
+	private String username;
+	private String password;
 	private double availableAmount;
 	private String title;
 	private String department;
 	private String officeLoc;
 
-	
-	public Employee(int iD, String firstName, String lastName, double availableAmount, String title, String department,
-			String officeLoc) {
+	public Employee(int iD, String firstName, String lastName, String username, String password, double availableAmount,
+			String title, String department, String officeLoc) {
 		super();
 		ID = iD;
 		this.firstName = firstName;
 		this.lastName = lastName;
+		this.username = username;
+		this.password = password;
 		this.availableAmount = availableAmount;
 		this.title = title;
 		this.department = department;
@@ -48,6 +51,22 @@ public class Employee {
 
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
 	}
 
 	public double getAvailableAmount() {
@@ -84,9 +103,9 @@ public class Employee {
 
 	@Override
 	public String toString() {
-		return "Employee [ID=" + ID + ", firstName=" + firstName + ", lastName=" + lastName + ", availableAmount="
-				+ availableAmount + ", title=" + title + ", department=" + department + ", officeLoc=" + officeLoc
-				+ "]";
+		return "Employee [ID=" + ID + ", firstName=" + firstName + ", lastName=" + lastName + ", username=" + username
+				+ ", password=" + password + ", availableAmount=" + availableAmount + ", title=" + title
+				+ ", department=" + department + ", officeLoc=" + officeLoc + "]";
 	}
 
 }

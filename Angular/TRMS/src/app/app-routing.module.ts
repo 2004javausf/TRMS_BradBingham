@@ -4,11 +4,7 @@ import { RFormComponent } from "./r-form/r-form.component";
 import { LoginComponent } from "./login/login.component";
 import { DashboardComponent } from "./dashboard/dashboard.component";
 
-const routes: Routes = [
-  { path: "", component: LoginComponent },
-  { path: "form", component: RFormComponent },
-  { path: "dashboard", component: DashboardComponent },
-];
+const routes: Routes = [{ path: "", component: DashboardComponent }];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],

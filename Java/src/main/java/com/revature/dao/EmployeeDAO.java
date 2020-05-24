@@ -9,5 +9,6 @@ public interface EmployeeDAO {
 	public void insertEmployee(Employee e) throws SQLException;
 
 	public List<Employee> getEmployeeList() throws SQLException;
-
+	
+	public Employee getEmployeeBy(String filter) throws SQLException;
 }
