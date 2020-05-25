@@ -1,4 +1,6 @@
-import { Component, OnInit } from "@angular/core";
+import { RformService } from "./../rform.service";
+import { Component, OnInit, Input } from "@angular/core";
+import { Employee } from "../templates/employee";
 
 @Component({
   selector: "r-form",
@@ -6,23 +8,20 @@ import { Component, OnInit } from "@angular/core";
   styleUrls: ["./r-form.component.css"],
 })
 export class RFormComponent implements OnInit {
-  //TODO: import employee info
-  employee = {
-    id: 1,
-    firstName: "Brad",
-    lastName: "Bingham",
-    department: "sales",
-  };
+  @Input("user") user: Employee;
 
   //TODO: make this caluculate estimated amount
-  total = 1000;
+  total;
 
-  constructor() {}
+  constructor(private rformService: RformService) {}
 
-  ngOnInit(): void {}
-  //TODO: post f.value json object to servlet
+  ngOnInit(): void {
+    this.total = this.user.availableAmount;
+  }
   submit(f) {
     //f.value sends json object
-    console.log(f);
+    f.value.empID = this.user.id;
+    console.log(f.value);
+    this.rformService.postNewForm(f.value).subscribe((res) => console.log(res));
   }
 }

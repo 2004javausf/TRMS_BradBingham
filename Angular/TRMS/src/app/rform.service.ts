@@ -15,4 +15,7 @@ export class RformService {
   getByUserId(id): Observable<Rform[]> {
     return this.http.get<Rform[]>(this.url + id);
   }
+  postNewForm(form: Rform): Observable<Rform> {
+    return this.http.post<Rform>(this.url, JSON.stringify(form));
+  }
 }

@@ -4,17 +4,17 @@
 
     <div class="formElement">
       <p>
-        Employee ID: <span>{{ employee.id }}</span>
+        Employee ID: <span>{{ user.id }}</span>
       </p>
     </div>
     <div class="formElement">
       <p>
-        First name: <span>{{ employee.firstName }}</span>
+        First name: <span>{{ user.firstName }}</span>
       </p>
     </div>
     <div class="formElement">
       <p>
-        Last name: <span>{{ employee.lastName }}</span>
+        Last name: <span>{{ user.lastName }}</span>
       </p>
     </div>
 
@@ -28,6 +28,7 @@
           type="date"
           name="startDate"
           id="startDate"
+          pattern="\d{4}-\d{2}-\d{2}"
         />
         <div *ngIf="startDate.touched && startDate.invalid" class="alert">
           <div *ngIf="startDate.errors.required">This field is required</div>
@@ -101,13 +102,13 @@
 
     <div class="row">
       <div class="formElement col">
-        <label for="gradingFormat">Grading Format </label> <br />
+        <label for="gradeFormatID">Grading Format </label> <br />
         <select
           ngModel
-          #gradingFormat="ngModel"
+          #gradeFormatID="ngModel"
           required
-          name="gradingFormat"
-          id="gradingFormat"
+          name="gradeFormatID"
+          id="gradeFormatID"
         >
           <option value="1">Pass/Fail</option>
           <option value="2">>80%</option>
@@ -116,10 +117,10 @@
           <option value="5">in description</option>
         </select>
         <div
-          *ngIf="gradingFormat.touched && gradingFormat.invalid"
+          *ngIf="gradeFormatID.touched && gradeFormatID.invalid"
           class="alert"
         >
-          <div *ngIf="gradingFormat.errors.required">
+          <div *ngIf="gradeFormatID.errors.required">
             This field is required
           </div>
         </div>
@@ -185,9 +186,16 @@
 
     <div class="formElement">
       <div id="optionalInfo">
-        <label for="attachment"
+        <label for="onSubmit"
           >(optional) attachment
-          <input type="file" name="attachment" id="attachment" />
+          <input
+            ngModel
+            #onSubmit="ngModel"
+            type="file"
+            name="onSubmit"
+            id="onSubmit"
+            accept=".txt"
+          />
         </label>
       </div>
     </div>

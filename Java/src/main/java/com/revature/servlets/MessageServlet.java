@@ -19,9 +19,19 @@ import com.revature.daoimpl.MessageDAOImpl;
 public class MessageServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
+	@Override
+	protected void doOptions(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		setAccessControlHeaders(response);
+		response.setStatus(HttpServletResponse.SC_OK);
+	}
+	private void setAccessControlHeaders(HttpServletResponse response) {
+		response.setHeader("Access-Control-Allow-Origin", "http://localhost:4200");
+		response.setHeader("Access-Control-Allow-Methods", "*");
+	}
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		setAccessControlHeaders(response);
 		System.out.println("In doGet MessageServlet");
 		String filter = request.getPathInfo().substring(1);
 		
@@ -56,6 +66,7 @@ public class MessageServlet extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		setAccessControlHeaders(response);
 		System.out.println("In doPost MessageServlet");
 		Message ms = null;
 		ObjectMapper mapper = new ObjectMapper();

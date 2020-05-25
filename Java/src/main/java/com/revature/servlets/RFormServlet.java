@@ -17,8 +17,20 @@ import com.revature.daoimpl.RFormDAOImpl;
 
 public class RFormServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	
+	@Override
+	protected void doOptions(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		setAccessControlHeaders(response);
+		response.setStatus(HttpServletResponse.SC_OK);
+	}
+	private void setAccessControlHeaders(HttpServletResponse response) {
+		response.setHeader("Access-Control-Allow-Headers", "*");
+		response.setHeader("Access-Control-Allow-Origin", "http://localhost:4200");
+		response.setHeader("Access-Control-Allow-Methods", "*");
+	}
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		setAccessControlHeaders(response);
 		System.out.println("In doGet ReinbursementFormServlet");
 		String filter = request.getPathInfo().substring(1);
 		
@@ -53,6 +65,7 @@ public class RFormServlet extends HttpServlet {
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		setAccessControlHeaders(response);
 		System.out.println("In doPost ReinbursementFormServlet");
 				RForm rf = null;
 				ObjectMapper mapper = new ObjectMapper();
@@ -63,7 +76,7 @@ public class RFormServlet extends HttpServlet {
 				try {
 					rdi.insertForm(rf);
 					PrintWriter pw = response.getWriter();
-					pw.write("<h3>Added Form</h3>");
+					pw.write("submitted");
 					pw.close();
 				} catch (SQLException e) {
 					e.printStackTrace();

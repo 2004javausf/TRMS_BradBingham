@@ -9,8 +9,8 @@ import { Employee } from "./templates/employee";
 export class EmployeeService {
   private url = "http://localhost:8080/TRMS/employee/";
   constructor(private http: HttpClient) {}
-  validateUser(userPass) {
-    return this.http.post(this.url, userPass);
+  validateUser(userPass): Observable<Employee> {
+    return this.http.post<Employee>(this.url, JSON.stringify(userPass));
   }
   getEmployee(name): Observable<Employee> {
     return this.http.get<Employee>(this.url + name);

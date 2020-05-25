@@ -1,5 +1,5 @@
 export interface Rform {
-  ID: number;
+  id: number;
   empID: number;
   status: string;
   supApr: string;

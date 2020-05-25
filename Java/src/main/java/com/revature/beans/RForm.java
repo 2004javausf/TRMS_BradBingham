@@ -3,12 +3,12 @@ package com.revature.beans;
 import java.sql.Blob;
 
 public class RForm {
-	private int ID;
+	private int id;
 	private int empID;
 	private String status;
 	private String supApr;
 	private String supSubDate;
-	private String headArp;
+	private String headApr;
 	private String headSubDate;
 	private String coorApr;
 	private String coorSubDate;
@@ -21,17 +21,17 @@ public class RForm {
 	private double cost;
 	private String description;
 	private String justification;
-	private int gradeFormID;
+	private int gradeFormatID;
 	private String eventType;
-	private Blob onSubmit;
+	private String onSubmit;
 	private double finalGrade;
 	private String gradeApr;
-	private Blob finalPres;
+	private String finalPres;
 	private String presApr;
 	
 	
 	public RForm(int empID, String startDate, String startTime, String location, double cost, String description,
-			String justification, int gradeFormID, String eventType, Blob onSubmit) {
+			String justification, int gradeFormatID, String eventType, String onSubmit) {
 		super();
 		this.empID = empID;
 		this.startDate = startDate;
@@ -40,23 +40,23 @@ public class RForm {
 		this.cost = cost;
 		this.description = description;
 		this.justification = justification;
-		this.gradeFormID = gradeFormID;
+		this.gradeFormatID = gradeFormatID;
 		this.eventType = eventType;
 		this.onSubmit = onSubmit;
 	}
 
-	public RForm(int iD, int empID, String status, String supApr, String supSubDate, String headArp, String headSubDate,
+	public RForm(int id, int empID, String status, String supApr, String supSubDate, String headApr, String headSubDate,
 			String coorApr, String coorSubDate, String isAltered, String rejectMessage, String formSubDate,
 			String startDate, String startTime, String location, double cost, String description, String justification,
-			int gradeFormID, String eventType, Blob onSubmit, double finalGrade, String gradeApr, Blob finalPres,
+			int gradeFormatID, String eventType, String onSubmit, double finalGrade, String gradeApr, String finalPres,
 			String presApr) {
 		super();
-		ID = iD;
+		this.id = id;
 		this.empID = empID;
 		this.status = status;
 		this.supApr = supApr;
 		this.supSubDate = supSubDate;
-		this.headArp = headArp;
+		this.headApr = headApr;
 		this.headSubDate = headSubDate;
 		this.coorApr = coorApr;
 		this.coorSubDate = coorSubDate;
@@ -69,7 +69,7 @@ public class RForm {
 		this.cost = cost;
 		this.description = description;
 		this.justification = justification;
-		this.gradeFormID = gradeFormID;
+		this.gradeFormatID = gradeFormatID;
 		this.eventType = eventType;
 		this.onSubmit = onSubmit;
 		this.finalGrade = finalGrade;
@@ -82,12 +82,12 @@ public class RForm {
 		super();
 	}
 
-	public int getID() {
-		return ID;
+	public int getId() {
+		return id;
 	}
 
-	public void setID(int iD) {
-		ID = iD;
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	public int getEmpID() {
@@ -122,12 +122,12 @@ public class RForm {
 		this.supSubDate = supSubDate;
 	}
 
-	public String getHeadArp() {
-		return headArp;
+	public String getheadApr() {
+		return headApr;
 	}
 
-	public void setHeadArp(String headArp) {
-		this.headArp = headArp;
+	public void setheadApr(String headApr) {
+		this.headApr = headApr;
 	}
 
 	public String getHeadSubDate() {
@@ -226,12 +226,12 @@ public class RForm {
 		this.justification = justification;
 	}
 
-	public int getGradeFormID() {
-		return gradeFormID;
+	public int getGradeFormatID() {
+		return gradeFormatID;
 	}
 
-	public void setGradeFormID(int gradeFormID) {
-		this.gradeFormID = gradeFormID;
+	public void setGradeFormatID(int gradeFormatID) {
+		this.gradeFormatID = gradeFormatID;
 	}
 
 	public String getEventType() {
@@ -242,11 +242,11 @@ public class RForm {
 		this.eventType = eventType;
 	}
 
-	public Blob getOnSubmit() {
+	public String getOnSubmit() {
 		return onSubmit;
 	}
 
-	public void setOnSubmit(Blob onSubmit) {
+	public void setOnSubmit(String onSubmit) {
 		this.onSubmit = onSubmit;
 	}
 
@@ -266,11 +266,11 @@ public class RForm {
 		this.gradeApr = gradeApr;
 	}
 
-	public Blob getFinalPres() {
+	public String getFinalPres() {
 		return finalPres;
 	}
 
-	public void setFinalPres(Blob finalPres) {
+	public void setFinalPres(String finalPres) {
 		this.finalPres = finalPres;
 	}
 
@@ -284,12 +284,12 @@ public class RForm {
 
 	@Override
 	public String toString() {
-		return "RForm [ID=" + ID + ", empID=" + empID + ", status=" + status + ", supApr=" + supApr + ", supSubDate="
-				+ supSubDate + ", headArp=" + headArp + ", headSubDate=" + headSubDate + ", coorApr=" + coorApr
+		return "RForm [id=" + id + ", empID=" + empID + ", status=" + status + ", supApr=" + supApr + ", supSubDate="
+				+ supSubDate + ", headApr=" + headApr + ", headSubDate=" + headSubDate + ", coorApr=" + coorApr
 				+ ", coorSubDate=" + coorSubDate + ", isAltered=" + isAltered + ", rejectMessage=" + rejectMessage
 				+ ", formSubDate=" + formSubDate + ", startDate=" + startDate + ", startTime=" + startTime
 				+ ", location=" + location + ", cost=" + cost + ", description=" + description + ", justification="
-				+ justification + ", gradeFormID=" + gradeFormID + ", eventType=" + eventType + ", onSubmit=" + onSubmit
+				+ justification + ", gradeFormatID=" + gradeFormatID + ", eventType=" + eventType + ", onSubmit=" + onSubmit
 				+ ", finalGrade=" + finalGrade + ", gradeApr=" + gradeApr + ", finalPres=" + finalPres + ", presApr="
 				+ presApr + "]";
 	}
