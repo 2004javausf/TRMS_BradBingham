@@ -51,7 +51,7 @@ public class EmployeeSevlet extends HttpServlet {
 			pw.flush();
 		} else {
 			try {
-				emJSON = mapper.writeValueAsString(edi.getEmployeeBy(filter));
+				emJSON = mapper.writeValueAsString(edi.getEmployeeById(filter));
 				response.setContentType("application/json");
 				response.setCharacterEncoding("UTF-8");
 				pw.print(emJSON);
@@ -66,12 +66,15 @@ public class EmployeeSevlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		setAccessControlHeaders(response);
 		System.out.println("In doPost EmployeeServlet");
+		
 		Employee em = null;
 		ObjectMapper mapper = new ObjectMapper();
 		//convert JSON to java object
 		em = mapper.readValue(request.getInputStream(),Employee.class);
+		
 		EmployeeDAOImpl edi = new EmployeeDAOImpl();
-		Employee checkEm = edi.getEmployeeBy(em.getUsername());
+		Employee checkEm = edi.getEmployeeByName(em.getUsername());
+		
 		PrintWriter pw = response.getWriter();
 		if(checkEm.getPassword().equals(em.getPassword())) {
 			String emJSON = mapper.writeValueAsString(checkEm);

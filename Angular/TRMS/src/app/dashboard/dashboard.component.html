@@ -80,17 +80,23 @@
   <!-- focus form -->
   <div *ngIf="display == 'focus'">
     <div class="centerCenter">
-      <form class="formBox">
+      <div class="formBox">
         <h2>Tuition Reimbursement Form</h2>
 
         <div class="formElement">
-          <p>Employee ID: <span></span></p>
+          <p>
+            Employee ID: <span>{{ focusEmployee.id }}</span>
+          </p>
         </div>
         <div class="formElement">
-          <p>First name: <span></span></p>
+          <p>
+            First name: <span>{{ focusEmployee.firstName }}</span>
+          </p>
         </div>
         <div class="formElement">
-          <p>Last name: <span></span></p>
+          <p>
+            Last name: <span>{{ focusEmployee.lastName }}</span>
+          </p>
         </div>
 
         <div class="row">
@@ -117,7 +123,7 @@
           </div>
           <div class="formElement">
             <label for="return">Estimated return</label> <br />
-            <input disabled [value]="focus.cost" />
+            <input disabled [value]="focus.pendingRe" />
           </div>
         </div>
 
@@ -158,21 +164,76 @@
             ></textarea>
           </label>
         </div>
+        <div style="text-align: center;" *ngIf="alreadySubmitted">
+          Final submitted and awaiting review
+        </div>
+        <form
+          #fv="ngForm"
+          *ngIf="!alreadySubmitted"
+          (ngSubmit)="finalGradePost(fv)"
+        >
+          <div class="formElement row">
+            <div class="col">
+              <input
+                (click)="finalType = 'grade'"
+                required
+                class="radioBtn"
+                type="radio"
+                name="finalType"
+                id="grade"
+                value="grade"
+              /><label for="grade">Submit Grade</label>
+            </div>
+            <div class="col">
+              <input
+                (click)="finalType = 'presentation'"
+                class="radioBtn"
+                type="radio"
+                name="finalType"
+                id="presentation"
+                value="presentation"
+              /><label for="presentation">Submit Presentation</label>
+            </div>
+          </div>
 
-        <div class="formElement">
-          <div id="optionalInfo">
-            <label for="attachment">
-              attachment
-              <a *ngIf="focus.onSubmit" href="#">This file</a>
-              <div *ngIf="!focus.onSubmit">Nothing</div>
+          <div *ngIf="finalType == 'grade'" class="formElement">
+            <label for="finalGrade">
+              <input
+                ngModel
+                required
+                #finalGrade="ngModel"
+                placeholder="Enter your final grade"
+                type="number"
+                name="finalGrade"
+                id="finalGrade"
+              />
             </label>
           </div>
-        </div>
 
-        <div class="formElement">
-          <button>Submit Final Grade</button>
-        </div>
-      </form>
+          <div *ngIf="finalType == 'presentation'" class="formElement">
+            <div id="optionalInfo">
+              <label for="finalPres">
+                Attach final presentation
+                <input
+                  ngModel
+                  required
+                  #finalPres="ngModel"
+                  type="file"
+                  name="finalPres"
+                  id="finalPres"
+                />
+              </label>
+            </div>
+          </div>
+          <div class="formElement">
+            <input
+              [disabled]="alreadySubmitted"
+              type="submit"
+              value="Submit Final Grage/Presentation"
+            />
+          </div>
+        </form>
+      </div>
     </div>
   </div>
   <!-- mew form -->

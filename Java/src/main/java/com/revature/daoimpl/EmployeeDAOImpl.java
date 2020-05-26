@@ -57,8 +57,34 @@ public class EmployeeDAOImpl implements EmployeeDAO {
 		return eList;
 	}
 
-	public Employee getEmployeeBy(String filter) {
+	public Employee getEmployeeByName(String filter) {
 		String sql = "SELECT * FROM EMPLOYEES WHERE USERNAME ='"+filter+"'";
+		Connection conn = cf.getConnection();
+		Employee e = null;
+		try {
+			Statement stmt = conn.createStatement();
+			ResultSet rs = stmt.executeQuery(sql);
+			while(rs.next()) {
+				e = new Employee(
+						rs.getInt(1),
+						rs.getString(2),
+						rs.getString(3),
+						rs.getString(4),
+						rs.getString(5),
+						rs.getDouble(6),
+						rs.getString(7),
+						rs.getString(8),
+						rs.getString(9)
+						);
+			}
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		return e;
+	}
+	public Employee getEmployeeById(String filter) {
+		String sql = "SELECT * FROM EMPLOYEES WHERE ID ='"+filter+"'";
 		Connection conn = cf.getConnection();
 		Employee e = null;
 		try {

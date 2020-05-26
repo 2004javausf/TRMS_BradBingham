@@ -75,3 +75,7 @@ button {
 li {
   border: 1px solid black;
 }
+#grade,
+#presentation {
+  width: auto;
+}

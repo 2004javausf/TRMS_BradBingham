@@ -71,6 +71,7 @@
       <div class="formElement">
         <label for="cost">Event cost </label> <br />
         <input
+          (focusout)="setCost(cost.value)"
           ngModel
           #cost="ngModel"
           required
@@ -83,19 +84,19 @@
         </div>
       </div>
       <div class="formElement">
-        <label for="return">Estimated return</label> <br />
+        <label for="pendingRe">Estimated return</label> <br />
         <input
           disabled
           ngModel
-          [placeholder]="total"
+          [placeholder]="pendingAmount"
           type="text"
-          #return="ngModel"
+          #pendingRe="ngModel"
           required
-          name="return"
-          id="return"
+          name="pendingRe"
+          id="pendingRe"
         />
-        <div *ngIf="return.touched && return.invalid" class="alert">
-          <div *ngIf="return.errors.required">This field is required</div>
+        <div *ngIf="pendingRe.touched && pendingRe.invalid" class="alert">
+          <div *ngIf="pendingRe.errors.required">This field is required</div>
         </div>
       </div>
     </div>
@@ -129,6 +130,7 @@
       <div class="formElement col">
         <label for="eventType">Event type </label> <br />
         <select
+          (focusout)="setFormat(eventType.value)"
           ngModel
           #eventType="ngModel"
           required

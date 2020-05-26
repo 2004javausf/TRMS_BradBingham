@@ -1,7 +1,5 @@
 package com.revature.beans;
 
-import java.sql.Blob;
-
 public class RForm {
 	private int id;
 	private int empID;
@@ -19,6 +17,7 @@ public class RForm {
 	private String startTime;
 	private String location;
 	private double cost;
+	private double pendingRe;
 	private String description;
 	private String justification;
 	private int gradeFormatID;
@@ -28,16 +27,16 @@ public class RForm {
 	private String gradeApr;
 	private String finalPres;
 	private String presApr;
-	
-	
-	public RForm(int empID, String startDate, String startTime, String location, double cost, String description,
-			String justification, int gradeFormatID, String eventType, String onSubmit) {
+
+	public RForm(int empID, String startDate, String startTime, String location, double cost, double pendingRe,
+			String description, String justification, int gradeFormatID, String eventType, String onSubmit) {
 		super();
 		this.empID = empID;
 		this.startDate = startDate;
 		this.startTime = startTime;
 		this.location = location;
 		this.cost = cost;
+		this.pendingRe = pendingRe;
 		this.description = description;
 		this.justification = justification;
 		this.gradeFormatID = gradeFormatID;
@@ -47,9 +46,9 @@ public class RForm {
 
 	public RForm(int id, int empID, String status, String supApr, String supSubDate, String headApr, String headSubDate,
 			String coorApr, String coorSubDate, String isAltered, String rejectMessage, String formSubDate,
-			String startDate, String startTime, String location, double cost, String description, String justification,
-			int gradeFormatID, String eventType, String onSubmit, double finalGrade, String gradeApr, String finalPres,
-			String presApr) {
+			String startDate, String startTime, String location, double cost, double pendingRe, String description,
+			String justification, int gradeFormatID, String eventType, String onSubmit, double finalGrade,
+			String gradeApr, String finalPres, String presApr) {
 		super();
 		this.id = id;
 		this.empID = empID;
@@ -67,6 +66,7 @@ public class RForm {
 		this.startTime = startTime;
 		this.location = location;
 		this.cost = cost;
+		this.pendingRe = pendingRe;
 		this.description = description;
 		this.justification = justification;
 		this.gradeFormatID = gradeFormatID;
@@ -122,11 +122,11 @@ public class RForm {
 		this.supSubDate = supSubDate;
 	}
 
-	public String getheadApr() {
+	public String getHeadApr() {
 		return headApr;
 	}
 
-	public void setheadApr(String headApr) {
+	public void setHeadApr(String headApr) {
 		this.headApr = headApr;
 	}
 
@@ -210,6 +210,14 @@ public class RForm {
 		this.cost = cost;
 	}
 
+	public double getPendingRe() {
+		return pendingRe;
+	}
+
+	public void setPendingRe(double pendingRe) {
+		this.pendingRe = pendingRe;
+	}
+
 	public String getDescription() {
 		return description;
 	}
@@ -288,10 +296,10 @@ public class RForm {
 				+ supSubDate + ", headApr=" + headApr + ", headSubDate=" + headSubDate + ", coorApr=" + coorApr
 				+ ", coorSubDate=" + coorSubDate + ", isAltered=" + isAltered + ", rejectMessage=" + rejectMessage
 				+ ", formSubDate=" + formSubDate + ", startDate=" + startDate + ", startTime=" + startTime
-				+ ", location=" + location + ", cost=" + cost + ", description=" + description + ", justification="
-				+ justification + ", gradeFormatID=" + gradeFormatID + ", eventType=" + eventType + ", onSubmit=" + onSubmit
-				+ ", finalGrade=" + finalGrade + ", gradeApr=" + gradeApr + ", finalPres=" + finalPres + ", presApr="
-				+ presApr + "]";
+				+ ", location=" + location + ", cost=" + cost + ", pendingRe=" + pendingRe + ", description="
+				+ description + ", justification=" + justification + ", gradeFormatID=" + gradeFormatID + ", eventType="
+				+ eventType + ", onSubmit=" + onSubmit + ", finalGrade=" + finalGrade + ", gradeApr=" + gradeApr
+				+ ", finalPres=" + finalPres + ", presApr=" + presApr + "]";
 	}
 
 }

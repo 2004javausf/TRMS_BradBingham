@@ -20,7 +20,7 @@ public class RFormDAOImpl implements RFormDAO {
 
 	@Override
 	public void insertForm(RForm rf) throws SQLException {
-		String sql = "{ call INSERT_R_FORM(?,?,?,?,?,?,?,?,?,?)";
+		String sql = "{ call INSERT_R_FORM(?,?,?,?,?,?,?,?,?,?,?)";
 		Connection conn = cf.getConnection();
 		CallableStatement call = conn.prepareCall(sql);
 		call.setInt(1, rf.getEmpID());
@@ -28,11 +28,12 @@ public class RFormDAOImpl implements RFormDAO {
 		call.setString(3, rf.getStartTime());
 		call.setString(4, rf.getLocation());
 		call.setDouble(5, rf.getCost());
-		call.setString(6, rf.getDescription());
-		call.setString(7, rf.getJustification());
-		call.setInt(8, rf.getGradeFormatID());
-		call.setString(9, rf.getEventType());
-		call.setString(10, rf.getOnSubmit());
+		call.setDouble(6, rf.getPendingRe());
+		call.setString(7, rf.getDescription());
+		call.setString(8, rf.getJustification());
+		call.setInt(9, rf.getGradeFormatID());
+		call.setString(10, rf.getEventType());
+		call.setString(11, rf.getOnSubmit());
 		call.execute();
 		call.close();
 	}
@@ -84,15 +85,16 @@ public class RFormDAOImpl implements RFormDAO {
 					rs.getString(14),
 					rs.getString(15),
 					rs.getDouble(16),
-					rs.getString(17),
+					rs.getDouble(17),
 					rs.getString(18),
-					rs.getInt(19),
-					rs.getString(20),
+					rs.getString(19),
+					rs.getInt(20),
 					rs.getString(21),
-					rs.getDouble(22),
-					rs.getString(23),
+					rs.getString(22),
+					rs.getDouble(23),
 					rs.getString(24),
-					rs.getString(25)
+					rs.getString(25),
+					rs.getString(26)
 					);
 			rfList.add(rf);
 		}
@@ -125,15 +127,16 @@ public class RFormDAOImpl implements RFormDAO {
 					rs.getString(14),
 					rs.getString(15),
 					rs.getDouble(16),
-					rs.getString(17),
+					rs.getDouble(17),
 					rs.getString(18),
-					rs.getInt(19),
-					rs.getString(20),
+					rs.getString(19),
+					rs.getInt(20),
 					rs.getString(21),
-					rs.getDouble(22),
-					rs.getString(23),
+					rs.getString(22),
+					rs.getDouble(23),
 					rs.getString(24),
-					rs.getString(25)
+					rs.getString(25),
+					rs.getString(26)
 					);
 			rfList.add(rf);
 		}

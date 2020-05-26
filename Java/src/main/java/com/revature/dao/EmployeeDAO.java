@@ -10,5 +10,5 @@ public interface EmployeeDAO {
 
 	public List<Employee> getEmployeeList() throws SQLException;
 	
-	public Employee getEmployeeBy(String filter) throws SQLException;
+	public Employee getEmployeeByName(String filter) throws SQLException;
 }

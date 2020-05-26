@@ -12,7 +12,7 @@ export class EmployeeService {
   validateUser(userPass): Observable<Employee> {
     return this.http.post<Employee>(this.url, JSON.stringify(userPass));
   }
-  getEmployee(name): Observable<Employee> {
-    return this.http.get<Employee>(this.url + name);
+  getEmployee(id: number): Observable<Employee> {
+    return this.http.get<Employee>(this.url + id);
   }
 }

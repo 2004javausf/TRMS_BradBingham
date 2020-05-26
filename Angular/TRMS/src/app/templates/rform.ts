@@ -15,6 +15,7 @@ export interface Rform {
   startTime: string;
   location: string;
   cost: number;
+  pendingRe: number;
   description: string;
   justification: string;
   gradeFormatID: number;
