@@ -5,6 +5,7 @@ import { Message } from "./../templates/message";
 import { Component, OnInit, Input } from "@angular/core";
 import { MessageService } from "../message.service";
 import { Rform } from "../templates/rform";
+import { StatusService } from "../status.service";
 
 @Component({
   selector: "dashboard",
@@ -12,27 +13,43 @@ import { Rform } from "../templates/rform";
   styleUrls: ["./dashboard.component.css"],
 })
 export class DashboardComponent implements OnInit {
+  data = "sample";
   display = "login";
   loggedIn = false;
   user: Employee;
+  availableReinbursement: number;
+
+  calculatedAmount() {
+    let pendingAmount = 0;
+    this.forms
+      .filter((x) => x.status == "Pending")
+      .forEach((x) => (pendingAmount += x.pendingRe));
+    this.availableReinbursement = this.user.availableAmount - pendingAmount;
+  }
+
   constructor(
     private messageService: MessageService,
     private employeeService: EmployeeService,
-    private rformService: RformService
+    private rformService: RformService,
+    private statusService: StatusService
   ) {}
   displayChange(toThis) {
     if (!this.loggedIn) {
-      console.log(this.user);
-      //TODO: switch when ready to present, tested
-      // this.messageService
-      //   .getByUserId(this.user.id)
-      //   .subscribe((res) => (this.messages = res));
-      // this.rformService
-      //   .getByUserId(this.user.id)
-      //   .subscribe((res) => (this.forms = res));
-      // this.loggedIn = true;
-      this.forms = sampleForms;
-      this.messages = sampleMessages;
+      //TODO: remove this when ready to go live, tested
+      if (this.data == "sample") {
+        this.forms = sampleForms;
+        this.messages = sampleMessages;
+        this.calculatedAmount();
+      } else {
+        this.messageService
+          .getByUserId(this.user.id)
+          .subscribe((res) => (this.messages = res));
+        this.rformService.getByUserId(this.user.id).subscribe((res) => {
+          this.forms = res;
+          this.calculatedAmount();
+        });
+        this.loggedIn = true;
+      }
     }
     if (toThis == "login") {
       this.messages = null;
@@ -48,16 +65,20 @@ export class DashboardComponent implements OnInit {
   }
   //login component
   submit(f) {
+    console.log(f.value);
     //TODO: switch when ready to present, tested
-    // this.employeeService.validateUser(f.value).subscribe(
-    //   (res) => {
-    //     this.user = res;
-    //     this.displayChange("forms");
-    //   },
-    //   (error) => window.alert("incorrect username/password")
-    // );
-    this.user = sampleEmployee;
-    this.displayChange("forms");
+    if (this.data == "sample") {
+      this.user = sampleEmployee;
+      this.displayChange("forms");
+    } else {
+      this.employeeService.validateUser(f.value).subscribe(
+        (res) => {
+          this.user = res;
+          this.displayChange("forms");
+        },
+        (error) => window.alert("incorrect username/password")
+      );
+    }
   }
   //myforms comoponent
   messages: Message[];
@@ -76,15 +97,40 @@ export class DashboardComponent implements OnInit {
       this.focusEmployee = this.user;
     } else {
       //TODO: test employee services and switch
-      this.focusEmployee = this.user;
-      // this.employeeService
-      //   .getEmployee(this.focus.id)
-      //   .subscribe((res) => (this.focusEmployee = res));
+      if (this.data == "sample") {
+        this.focusEmployee = this.user;
+      } else {
+        this.employeeService
+          .getEmployee(this.focus.id)
+          .subscribe((res) => (this.focusEmployee = res));
+      }
     }
   }
-  //TODO: make back button for forms
-  goBack() {}
+  goBack() {
+    //TODO: make back button for forms
+  }
   //focus form comp
+  onReviewChanges(input) {
+    let scObj = {
+      rfId: this.focus.id,
+      empId: this.focus.empID,
+      aprId: this.user.id,
+      title: this.user.title,
+      newStatus: input,
+      reason: null,
+    };
+    console.log(scObj);
+    if (input == "Accept") {
+      this.statusService.approveForm(scObj).subscribe((res) => {});
+      this.focus.isAltered = "Accept";
+    } else {
+      this.statusService
+        .declineForm(scObj)
+        .subscribe((res) => console.log(res));
+      this.focus.status = "Canceled";
+      this.focus.isAltered = "Canceled";
+    }
+  }
   gradingFormat(format) {
     let swap = {
       1: "Pass/Fail",
@@ -103,7 +149,7 @@ export class DashboardComponent implements OnInit {
   ngOnInit(): void {}
 }
 let sampleEmployee: Employee = {
-  id: 1,
+  id: 3,
   firstName: "FrstNm",
   lastName: "LstNM",
   username: "User1",
@@ -117,7 +163,7 @@ let sampleForms: Rform[] = [
   {
     id: 1,
     empID: 1,
-    status: "In-reveiw",
+    status: "Pending",
     supApr: "False",
     supSubDate: null,
     headApr: "False",
@@ -143,16 +189,16 @@ let sampleForms: Rform[] = [
     presApr: "False",
   },
   {
-    id: 2,
-    empID: 1,
-    status: "In-reveiw",
+    id: 6,
+    empID: 3,
+    status: "Pending",
     supApr: "False",
     supSubDate: null,
     headApr: "False",
     headSubDate: null,
     coorApr: "False",
     coorSubDate: null,
-    isAltered: "False",
+    isAltered: "True",
     rejectMessage: null,
     formSubDate: null,
     startDate: "20-MAY-2021",
@@ -189,3 +235,11 @@ let sampleMessages: Message[] = [
     message: "message two",
   },
 ];
+let sampleChangeStatus = {
+  rfId: 5,
+  empId: 3,
+  aprId: 3,
+  title: "Associate",
+  newStatus: "Canceled",
+  reason: "here is my reason",
+};

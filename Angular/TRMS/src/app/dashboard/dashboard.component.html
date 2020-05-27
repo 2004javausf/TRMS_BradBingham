@@ -51,7 +51,7 @@
       <a (click)="displayChange('login')">Log out</a>
     </div>
     <div class="infoBox col">
-      <p>available amount ${{ user.availableAmount }}</p>
+      <p>available amount ${{ availableReinbursement }}</p>
     </div>
   </div>
   <hr />
@@ -98,7 +98,14 @@
             Last name: <span>{{ focusEmployee.lastName }}</span>
           </p>
         </div>
-
+        <div class="formElement alert" *ngIf="focus.isAltered == 'True'">
+          This form has been reviewed and altered by the Benefit Coordinator.
+          Keep the changes?
+          <div class="buttonBox">
+            <button (click)="onReviewChanges('Accept')">Accept</button
+            ><button (click)="onReviewChanges('Canceled')">Decline</button>
+          </div>
+        </div>
         <div class="row">
           <div class="formElement">
             <label for="startDate">Start date </label> <br />

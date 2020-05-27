@@ -162,20 +162,25 @@ END;
 /
 
 CREATE OR REPLACE PROCEDURE R_FORM_STATUS_CHANGE
-(R_FORM_ID NUMBER,EMP_ID NUMBER,APPROVER VARCHAR2,NEW_STATUS VARCHAR2, REASON VARCHAR2)
+(R_FORM_ID NUMBER,EMP_ID NUMBER,APPROVER_ID NUMBER,APPROVER VARCHAR2,NEW_STATUS VARCHAR2, REASON VARCHAR2)
 AS
 BEGIN
-    IF APPROVER = 'SUPERVISOR' THEN
+    IF APPROVER = 'Supervisor' THEN
             UPDATE R_FORMS SET APPROVE_SUPERVISOR = NEW_STATUS WHERE R_FORMS.ID = R_FORM_ID;
             UPDATE R_FORMS SET SUPERVISOR_SUBMIT_DATE = CURRENT_TIMESTAMP WHERE R_FORMS.ID = R_FORM_ID;
-    ELSIF APPROVER = 'HEAD' THEN
+    ELSIF APPROVER = 'Head' THEN
             UPDATE R_FORMS SET APPROVE_HEAD = NEW_STATUS WHERE R_FORMS.ID = R_FORM_ID;
             UPDATE R_FORMS SET HEAD_SUBMIT_DATE = CURRENT_TIMESTAMP WHERE R_FORMS.ID = R_FORM_ID;
-    ELSIF APPROVER = 'COORDINATOR' THEN
+    ELSIF APPROVER = 'Associate' THEN
+        IF NEW_STATUS = 'Accept' THEN
+            UPDATE R_FORMS SET ALTERED_FORM = NEW_STATUS WHERE R_FORMS.ID = R_FORM_ID;
+        ELSE
+            UPDATE R_FORMS SET ALTERED_FORM = NEW_STATUS WHERE R_FORMS.ID = R_FORM_ID;
+            UPDATE R_FORMS SET FORM_STATUS = 'Canceled' WHERE R_FORMS.ID = R_FORM_ID;
+        END IF;
+    ELSE
             UPDATE R_FORMS SET APPROVE_COORDINATOR = NEW_STATUS WHERE R_FORMS.ID = R_FORM_ID;
             UPDATE R_FORMS SET COORDINATOR_SUBMIT_DATE = CURRENT_TIMESTAMP WHERE R_FORMS.ID = R_FORM_ID;
-    ELSIF APPROVER = 'ASSOCIATE' THEN
-            UPDATE R_FORMS SET FORM_STATUS = NEW_STATUS WHERE R_FORMS.ID = R_FORM_ID;
     END IF;
     
     IF NEW_STATUS = 'Denied' THEN
@@ -183,7 +188,7 @@ BEGIN
             INSERT INTO MESSAGES VALUES(
                 MESSAGE_SEQ.NEXTVAL,
                 CURRENT_TIMESTAMP,
-                APPROVER,
+                APPROVER_ID,
                 EMP_ID,
                 R_FORM_ID,
                 APPROVER||'set form: '||R_FORM_ID||' to '||NEW_STATUS||' '+REASON);
@@ -191,7 +196,7 @@ BEGIN
         INSERT INTO MESSAGES VALUES(
         MESSAGE_SEQ.NEXTVAL,
         CURRENT_TIMESTAMP,
-        APPROVER,
+        APPROVER_ID,
         EMP_ID,
         R_FORM_ID,
         (APPROVER||' set form: '||R_FORM_ID||' to '||NEW_STATUS)
@@ -201,8 +206,9 @@ BEGIN
 END;
 /
  
+
 CREATE OR REPLACE PROCEDURE FINAL_STATUS_CHANGE
-(R_FORM NUMBER,EMP_ID NUMBER, NEW_GRADE_STATUS VARCHAR2, NEW_PRESENTATION_STATUS VARCHAR2)
+(BENCO_ID NUMBER,R_FORM NUMBER,EMP_ID NUMBER, NEW_GRADE_STATUS VARCHAR2, NEW_PRESENTATION_STATUS VARCHAR2)
 AS
 BEGIN
     IF NEW_GRADE_STATUS != NULL THEN
@@ -213,7 +219,7 @@ BEGIN
                 INSERT INTO MESSAGES VALUES(
                     MESSAGE_SEQ.NEXTVAL,
                     CURRENT_TIMESTAMP,
-                    'BenCo',
+                    BENCO_ID,
                     EMP_ID,
                     R_FORM,
                     ('BenCo set form: '||R_FORM||' to '||NEW_GRADE_STATUS)
@@ -222,7 +228,7 @@ BEGIN
                 INSERT INTO MESSAGES VALUES(
                 MESSAGE_SEQ.NEXTVAL,
                 CURRENT_TIMESTAMP,
-                'BenCo',
+                BENCO_ID,
                 EMP_ID,
                 R_FORM,
                 'BenCo set form: '||R_FORM||' to '||NEW_GRADE_STATUS
@@ -236,7 +242,7 @@ BEGIN
                 INSERT INTO MESSAGES VALUES(
                     MESSAGE_SEQ.NEXTVAL,
                     CURRENT_TIMESTAMP,
-                    'BenCo',
+                    BENCO_ID,
                     EMP_ID,
                     R_FORM,
                     ('BenCo set form: '||R_FORM||' to '||NEW_PRESENTATION_STATUS)
@@ -245,7 +251,7 @@ BEGIN
                 INSERT INTO MESSAGES VALUES(
                 MESSAGE_SEQ.NEXTVAL,
                 CURRENT_TIMESTAMP,
-                'BenCo',
+                BENCO_ID,
                 EMP_ID,
                 R_FORM,
                 'BenCo set form: '||R_FORM||' to '||NEW_GRADE_STATUS
@@ -257,9 +263,9 @@ BEGIN
 END;
 /
 
-SELECT EMPLOYEE_ID FROM R_FORMS WHERE R_FORMS.ID = 1;
+
 UPDATE EMPLOYEES SET AVAILABLE_AMOUNT = (AVAILABLE_AMOUNT - (SELECT PENDING_REIMBURSEMENT FROM R_FORMS WHERE R_FORMS.ID= 1)) WHERE EMPLOYEES.ID = (SELECT EMPLOYEE_ID FROM R_FORMS WHERE R_FORMS.ID = 1);
-SELECT * FROM EMPLOYEES;
+
 -------------------------------------------
 --MOCK TABLE DATA
 --FIRST_NAME VARCHAR2,LAST_NAME VARCHAR2,AVAILABLE_AMOUNT NUMBER,TITLE VARCHAR2,DEPARTMENT VARCHAR2,OFFICE_LOC VARCHAR2
@@ -270,7 +276,7 @@ CREATE SEQUENCE EMPLOYEE_SEQ
 EXECUTE INSERT_EMPLOYEE('UserOne','LastNm','User1','Password1',1000,'Head','Management','Main');
 EXECUTE INSERT_EMPLOYEE('UserTwo','LastNm','User2','Password2',900,'Supervisor','IT','Main');
 EXECUTE INSERT_EMPLOYEE('UserThree','LastNm','User3','Password3',800,'Associate','IT','Main');
-EXECUTE INSERT_EMPLOYEE('UserFour','LastNm','User4','Password4',700,'Associate','IT','Main');
+EXECUTE INSERT_EMPLOYEE('UserFour','LastNm','User4','Password4',700,'Associate','Benefits','Main');
 EXECUTE INSERT_EMPLOYEE('UserFive','LastNm','User5','Password5',600,'Supervisor','Sales','Main');
 EXECUTE INSERT_EMPLOYEE('UserSix','LastNm','User6','Password6',500,'Associate','Sales','Main');
 EXECUTE INSERT_EMPLOYEE('UserSeven','LastNm','User7','Password7',400,'Associate','Sales','Main');
@@ -289,6 +295,15 @@ EXECUTE INSERT_R_FORM(3,'01-MAY-2021','3 PM','Associate prep class',800,600,'Pre
 EXECUTE INSERT_R_FORM(3,'01-MAY-2021','4 PM','Associate Certification',600,500,'Certification for Associates','It will help',4,'Certification',NULL);
 EXECUTE INSERT_R_FORM(3,'01-MAY-2021','5 PM','Associate Technical Training',500,400,'Technical Training for Associates','It will help',5,'Technical Training',NULL);
 EXECUTE INSERT_R_FORM(3,'01-MAY-2021','6 PM','Associate therapy',400,300,'Therapy for Associates','It will help',5,'Other',NULL);
+--R_FORM_ID ,EMP_ID ,APPROVER_ID, title ,NEW_STATUS , REASON 
+EXECUTE R_FORM_STATUS_CHANGE(1,1,1,'Supervisor','Approved',NULL);
+EXECUTE R_FORM_STATUS_CHANGE(3,3,2,'Supervisor','Approved',NULL);
+EXECUTE R_FORM_STATUS_CHANGE(3,3,1,'Head','Approved',NULL);
+EXECUTE R_FORM_STATUS_CHANGE(6,3,3,'Associate','Canceled',NULL);
+--R_FORM_id ,EMP_ID , NEW_GRADE_STATUS , NEW_PRESENTATION_STATUS 
+EXECUTE FINAL_STATUS_CHANGE(4,6,3,'Passed',null);
+EXECUTE FINAL_STATUS_CHANGE(4,5,3,null,'Passed');
+
 
 --SENDER_EMPLOYEE_ID NUMBER,RECIPIANT_EMPLOYEE_ID NUMBER,R_FORM_ID NUMBER,MESSAGE VARCHAR2
 TRUNCATE TABLE MESSAGES;

@@ -3,7 +3,9 @@ package com.revature.dao;
 import java.sql.SQLException;
 import java.util.List;
 
+import com.revature.beans.Employee;
 import com.revature.beans.RForm;
+import com.revature.beans.StatusChange;
 
 public interface RFormDAO {
 
@@ -13,4 +15,7 @@ public interface RFormDAO {
 	
 	public List<RForm> getFormsById(int id) throws SQLException;
 	
+	public void updateStatus(StatusChange sc) throws SQLException;
+	
+	public void finalizeStatus(int rfId, int empId, double grade, String presentation) throws SQLException;
 }
