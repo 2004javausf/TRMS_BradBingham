@@ -2,6 +2,7 @@ import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Rform } from "./templates/rform";
 import { Observable } from "rxjs";
+import { Employee } from "./templates/employee";
 
 @Injectable({
   providedIn: "root",

@@ -49,6 +49,9 @@
       <a (click)="displayChange('forms')">My Forms</a>
       <a (click)="displayChange('newForm')">New Form</a>
       <a (click)="displayChange('login')">Log out</a>
+      <a *ngIf="user.title != 'Associate'" (click)="displayChange('manage')"
+        >Manage</a
+      >
     </div>
     <div class="infoBox col">
       <p>available amount ${{ availableReinbursement }}</p>
@@ -65,7 +68,7 @@
           <button (click)="focusOn(item)">View</button>
         </div>
         <div class="msgBox">
-          FormID: {{ item.ID }} Status: {{ item.status }}
+          FormID: {{ item.id }} Status: {{ item.status }}
         </div>
       </li>
     </ul>
@@ -75,6 +78,24 @@
       <li *ngFor="let item of messages">
         {{ item.message }}
       </li>
+    </ul>
+  </div>
+  <!-- manageForms -->
+  <div *ngIf="display == 'manage'" class="row">
+    <ul class="col">
+      <h4 class="listTitle">list for submitted forms</h4>
+      <li *ngIf="!manageForms">No forms to review</li>
+      <li *ngFor="let item of manageForms">
+        <div class="btnBox">
+          <button (click)="focusOn(item)">View</button>
+        </div>
+        <div class="msgBox">
+          FormID: {{ item.id }} Status: {{ item.status }}
+        </div>
+      </li>
+    </ul>
+    <ul class="col">
+      Something here
     </ul>
   </div>
   <!-- focus form -->
@@ -98,14 +119,7 @@
             Last name: <span>{{ focusEmployee.lastName }}</span>
           </p>
         </div>
-        <div class="formElement alert" *ngIf="focus.isAltered == 'True'">
-          This form has been reviewed and altered by the Benefit Coordinator.
-          Keep the changes?
-          <div class="buttonBox">
-            <button (click)="onReviewChanges('Accept')">Accept</button
-            ><button (click)="onReviewChanges('Canceled')">Decline</button>
-          </div>
-        </div>
+
         <div class="row">
           <div class="formElement">
             <label for="startDate">Start date </label> <br />
@@ -171,75 +185,189 @@
             ></textarea>
           </label>
         </div>
-        <div style="text-align: center;" *ngIf="alreadySubmitted">
-          Final submitted and awaiting review
-        </div>
-        <form
-          #fv="ngForm"
-          *ngIf="!alreadySubmitted"
-          (ngSubmit)="finalGradePost(fv)"
-        >
-          <div class="formElement row">
-            <div class="col">
-              <input
-                (click)="finalType = 'grade'"
-                required
-                class="radioBtn"
-                type="radio"
-                name="finalType"
-                id="grade"
-                value="grade"
-              /><label for="grade">Submit Grade</label>
+
+        <div *ngIf="focus.status == 'Pending'">
+          <div *ngIf="user.id != focus.empID">
+            <div *ngIf="focus.finalGrade" class="formElement">
+              Final Grade is {{ focus.finalGrade }}%
             </div>
-            <div class="col">
-              <input
-                (click)="finalType = 'presentation'"
-                class="radioBtn"
-                type="radio"
-                name="finalType"
-                id="presentation"
-                value="presentation"
-              /><label for="presentation">Submit Presentation</label>
+            <div *ngIf="focus.finalPres" class="formElement">
+              <a [href]="focus.finalPres">Final Presentation</a>
             </div>
           </div>
+          <div *ngIf="user.id == focus.empID">
+            <form
+              #fv="ngForm"
+              *ngIf="!alreadySubmitted"
+              (ngSubmit)="finalGradePost(fv)"
+            >
+              <div class="formElement row">
+                <div class="col">
+                  <input
+                    (click)="finalType = 'grade'"
+                    required
+                    class="radioBtn"
+                    type="radio"
+                    name="finalType"
+                    id="grade"
+                    value="grade"
+                  /><label for="grade">Submit Grade</label>
+                </div>
+                <div class="col">
+                  <input
+                    (click)="finalType = 'presentation'"
+                    class="radioBtn"
+                    type="radio"
+                    name="finalType"
+                    id="presentation"
+                    value="presentation"
+                  /><label for="presentation">Submit Presentation</label>
+                </div>
+              </div>
 
-          <div *ngIf="finalType == 'grade'" class="formElement">
-            <label for="finalGrade">
-              <input
-                ngModel
-                required
-                #finalGrade="ngModel"
-                placeholder="Enter your final grade"
-                type="number"
-                name="finalGrade"
-                id="finalGrade"
-              />
-            </label>
-          </div>
+              <div *ngIf="finalType == 'grade'" class="formElement">
+                <label for="finalGrade">
+                  <input
+                    ngModel
+                    required
+                    #finalGrade="ngModel"
+                    placeholder="Enter your final grade"
+                    type="number"
+                    name="finalGrade"
+                    id="finalGrade"
+                  />
+                </label>
+              </div>
 
-          <div *ngIf="finalType == 'presentation'" class="formElement">
-            <div id="optionalInfo">
-              <label for="finalPres">
-                Attach final presentation
+              <div *ngIf="finalType == 'presentation'" class="formElement">
+                <div id="optionalInfo">
+                  <label for="finalPres">
+                    Attach final presentation
+                    <input
+                      ngModel
+                      required
+                      #finalPres="ngModel"
+                      type="file"
+                      name="finalPres"
+                      id="finalPres"
+                    />
+                  </label>
+                </div>
+              </div>
+              <div class="formElement">
                 <input
-                  ngModel
-                  required
-                  #finalPres="ngModel"
-                  type="file"
-                  name="finalPres"
-                  id="finalPres"
+                  [disabled]="alreadySubmitted"
+                  type="submit"
+                  value="Submit Final Grage/Presentation"
                 />
-              </label>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div *ngIf="focus.status != 'Pending'">
+          <div *ngIf="user.id != focus.empID">
+            <div class="buttonBox">
+              <button (click)="onReviewChanges('Approved')">Approve</button>
+              <button (click)="declineReason = !declineReason">Decline</button>
+            </div>
+            <div style="text-align: center;" class="formElement">
+              <button
+                *ngIf="!requestAdditional"
+                (click)="requestAdditional = !requestAdditional"
+              >
+                Request additinoal information
+              </button>
+              <form
+                ngForm
+                #fa="ngForm"
+                (ngSubmit)="sendMessage(fa)"
+                *ngIf="requestAdditional"
+              >
+                <div class="formElement">
+                  <label for="requestMessage"
+                    >to employee #{{ focus.empID }}
+                    <textarea
+                      ngModel
+                      required
+                      name="requestMessage"
+                      id="requestMessage"
+                      #requestMessage="ngModel"
+                      placeholder="ex. I need more information please."
+                      cols="30"
+                      rows="5"
+                    ></textarea>
+                  </label>
+                </div>
+
+                <div class="formElement">
+                  <label for="requestSubmit">
+                    <input
+                      name="requestSubmit"
+                      id="requestSubmit"
+                      type="submit"
+                      [disabled]="!fa.valid"
+                      value="Submit"
+                    />
+                  </label>
+                </div>
+              </form>
+            </div>
+            <div style="text-align: center;" class="formElement">
+              <form
+                ngForm
+                #fd="ngForm"
+                (ngSubmit)="onReviewChanges('Declined', fd)"
+                *ngIf="declineReason"
+              >
+                <div class="formElement">
+                  <label for="declineReason"
+                    >to employee #{{ focus.empID }}
+                    <textarea
+                      ngModel
+                      required
+                      name="declineReason"
+                      id="declineReason"
+                      #declineReason="ngModel"
+                      placeholder="ex. Not valid material."
+                      cols="30"
+                      rows="5"
+                    ></textarea>
+                  </label>
+                </div>
+
+                <div class="formElement">
+                  <label for="declineSubmit">
+                    <input
+                      name="declineSubmit"
+                      id="declineSubmit"
+                      type="submit"
+                      [disabled]="!fd.valid"
+                      value="Submit"
+                    />
+                  </label>
+                </div>
+              </form>
             </div>
           </div>
-          <div class="formElement">
-            <input
-              [disabled]="alreadySubmitted"
-              type="submit"
-              value="Submit Final Grage/Presentation"
-            />
+
+          <div *ngIf="user.id == focus.empID">
+            <div *ngIf="user"></div>
+
+            <div class="formElement alert" *ngIf="focus.isAltered == 'True'">
+              This form has been reviewed and altered by the Benefit
+              Coordinator. Keep the changes?
+              <div class="buttonBox">
+                <button (click)="onReviewChanges('Accept')">Accept</button
+                ><button (click)="onReviewChanges('Canceled')">Decline</button>
+              </div>
+            </div>
+            <div *ngIf="focus.isAltered != 'True'">
+              <div style="text-align: center;" *ngIf="alreadySubmitted">
+                Final submitted and awaiting review
+              </div>
+            </div>
           </div>
-        </form>
+        </div>
       </div>
     </div>
   </div>

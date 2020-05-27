@@ -9,7 +9,6 @@ import { Employee } from "../templates/employee";
 })
 export class RFormComponent implements OnInit {
   @Input("user") user: Employee;
-
   //TODO: make this caluculate estimated amount
   available;
   pendingAmount;

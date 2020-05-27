@@ -1,3 +1,4 @@
+import { ManageService } from "./../manage.service";
 import { RformService } from "./../rform.service";
 import { EmployeeService } from "./../employee.service";
 import { Employee } from "./../templates/employee";
@@ -31,15 +32,22 @@ export class DashboardComponent implements OnInit {
     private messageService: MessageService,
     private employeeService: EmployeeService,
     private rformService: RformService,
-    private statusService: StatusService
+    private statusService: StatusService,
+    private manageService: ManageService
   ) {}
   displayChange(toThis) {
     if (!this.loggedIn) {
-      //TODO: remove this when ready to go live, tested
+      //TODO: remove this top if clause when ready to go live, tested
       if (this.data == "sample") {
         this.forms = sampleForms;
         this.messages = sampleMessages;
         this.calculatedAmount();
+        if (this.user.title != "Associate") {
+          this.manageService
+            .getManageForms(this.user)
+            .subscribe((res) => (this.manageForms = res));
+        }
+        this.loggedIn = true;
       } else {
         this.messageService
           .getByUserId(this.user.id)
@@ -48,6 +56,11 @@ export class DashboardComponent implements OnInit {
           this.forms = res;
           this.calculatedAmount();
         });
+        if (this.user.title != "Associate") {
+          this.manageService
+            .getManageForms(this.user)
+            .subscribe((res) => (this.manageForms = res));
+        }
         this.loggedIn = true;
       }
     }
@@ -85,7 +98,11 @@ export class DashboardComponent implements OnInit {
   focus: Rform;
   focusEmployee: Employee;
   forms: Rform[];
+  manageForms: Rform[];
+  requestAdditional: boolean = false;
+  declineReason: boolean = false;
 
+  //TODO: fix focus on focus employee
   focusOn(item: Rform) {
     console.log(item);
     this.displayChange("focus");
@@ -110,25 +127,34 @@ export class DashboardComponent implements OnInit {
     //TODO: make back button for forms
   }
   //focus form comp
-  onReviewChanges(input) {
+  sendMessage(input) {
+    let msObj = {
+      id: null,
+      submittedOn: null,
+      sendID: this.user.id,
+      recID: this.focus.empID,
+      formID: this.focus.id,
+      message: input.value.requestMessage,
+    };
+    this.messageService.sendMessage(msObj).subscribe((res) => console.log(res));
+  }
+  onReviewChanges(input, reason?) {
     let scObj = {
       rfId: this.focus.id,
       empId: this.focus.empID,
       aprId: this.user.id,
       title: this.user.title,
       newStatus: input,
-      reason: null,
+      reason: reason.value.declineReason,
     };
     console.log(scObj);
-    if (input == "Accept") {
-      this.statusService.approveForm(scObj).subscribe((res) => {});
-      this.focus.isAltered = "Accept";
-    } else {
-      this.statusService
-        .declineForm(scObj)
-        .subscribe((res) => console.log(res));
+    if (input == "Canceled") {
+      this.statusService.updateForm(scObj).subscribe((res) => {});
       this.focus.status = "Canceled";
       this.focus.isAltered = "Canceled";
+    } else {
+      this.statusService.updateForm(scObj).subscribe((res) => {});
+      this.focus.isAltered = input;
     }
   }
   gradingFormat(format) {
@@ -155,7 +181,7 @@ let sampleEmployee: Employee = {
   username: "User1",
   password: "Pass1",
   availableAmount: 1000,
-  title: "Associate",
+  title: "Supervisor",
   department: "Sales",
   officeLoc: "Main",
 };
@@ -183,9 +209,9 @@ let sampleForms: Rform[] = [
     gradeFormatID: 2,
     eventType: "College Course",
     onSubmit: null,
-    finalGrade: 40,
+    finalGrade: null,
     gradeApr: "False",
-    finalPres: null,
+    finalPres: "www.someplace.fjio",
     presApr: "False",
   },
   {
@@ -243,3 +269,9 @@ let sampleChangeStatus = {
   newStatus: "Canceled",
   reason: "here is my reason",
 };
+// {	"rfId":5,
+// 	"empId":3,
+// 	"aprId":3,
+// 	"title":"Associate",
+// 	"newStatus":"Accept",
+// 	"reason": "here is my reason"}

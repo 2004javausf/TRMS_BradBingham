@@ -15,4 +15,7 @@ export class MessageService {
   getByUserId(id): Observable<Message[]> {
     return this.http.get<Message[]>(this.url + id);
   }
+  sendMessage(ms: Message) {
+    return this.http.post(this.url, JSON.stringify(ms));
+  }
 }

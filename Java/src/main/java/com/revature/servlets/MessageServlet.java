@@ -76,7 +76,7 @@ public class MessageServlet extends HttpServlet {
 		try {
 			mdi.insertMessage(ms);
 			PrintWriter pw = response.getWriter();
-			pw.write("<h3>Added Message</h3>");
+			pw.write("Added Message");
 			pw.close();
 		} catch (SQLException e) {
 			e.printStackTrace();

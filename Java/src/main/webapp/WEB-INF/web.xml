@@ -41,4 +41,14 @@
     <servlet-name>UpdateStatus</servlet-name>
     <url-pattern>/status</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>Manage</display-name>
+    <servlet-name>Manage</servlet-name>
+    <servlet-class>com.revature.servlets.Manage</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>Manage</servlet-name>
+    <url-pattern>/manage</url-pattern>
+  </servlet-mapping>
 </web-app>

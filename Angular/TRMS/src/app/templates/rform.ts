@@ -20,9 +20,9 @@ export interface Rform {
   justification: string;
   gradeFormatID: number;
   eventType: string;
-  onSubmit: Blob;
+  onSubmit: string;
   finalGrade: number;
   gradeApr: string;
-  finalPres: Blob;
+  finalPres: string;
   presApr: string;
 }
