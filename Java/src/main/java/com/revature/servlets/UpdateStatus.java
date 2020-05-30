@@ -29,6 +29,22 @@ public class UpdateStatus extends HttpServlet {
 		response.setHeader("Access-Control-Allow-Origin", "http://localhost:4200");
 		response.setHeader("Access-Control-Allow-Methods", "*");
 	}
+	@Override
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		setAccessControlHeaders(response);
+		System.out.println("In doPostUpdateStatusServlet");
+		RFormDAOImpl rdi = new RFormDAOImpl();
+		int nextVal = 0;
+		try {
+			nextVal = rdi.getNextFormId();
+			System.out.println(nextVal);
+			PrintWriter pw = response.getWriter();
+			pw.write(Integer.toString(nextVal));
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		setAccessControlHeaders(response);

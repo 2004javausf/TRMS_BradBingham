@@ -1,6 +1,7 @@
 import { RformService } from "./../rform.service";
-import { Component, OnInit, Input } from "@angular/core";
+import { Component, OnInit, Input, Output, EventEmitter } from "@angular/core";
 import { Employee } from "../templates/employee";
+import { StatusService } from "../status.service";
 
 @Component({
   selector: "r-form",
@@ -10,6 +11,7 @@ import { Employee } from "../templates/employee";
 export class RFormComponent implements OnInit {
   @Input("user") user: Employee;
   @Input("setDate") setDate: Date;
+  @Output() submitted = new EventEmitter();
   //TODO: make this caluculate estimated amount
   available;
   pendingAmount;
@@ -40,7 +42,10 @@ export class RFormComponent implements OnInit {
     }
   }
 
-  constructor(private rformService: RformService) {}
+  constructor(
+    private rformService: RformService,
+    private statusService: StatusService
+  ) {}
 
   ngOnInit(): void {
     console.log(this.setDate);
@@ -82,16 +87,26 @@ export class RFormComponent implements OnInit {
       }
       f.value.empID = this.user.id;
       f.value.pendingRe = this.pendingAmount;
+      f.value.formSubDate = new Date().toISOString();
+      f.value.status = "In-review";
+      //TODO: test if this works live
+
       if (d3 >= d2) {
         //TODO:notify submitted as urgent
         f.value.isUrgent = "True";
       } else {
         f.value.isUrgent = "False";
       }
-      console.log(f.value);
-      this.rformService.postNewForm(f.value).subscribe();
-      //TODO: change display to 'forms'
-      // displayChange();
+      this.statusService.getNextFormId().subscribe((res) => {
+        if (res > 0) {
+          console.log("trying to get currval");
+          f.value.id = res;
+        }
+        window.alert("Succesfully submitted");
+        console.log(f.value);
+        this.submitted.emit(f.value);
+        this.rformService.postNewForm(f.value).subscribe();
+      });
     }
   }
 }

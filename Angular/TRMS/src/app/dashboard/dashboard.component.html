@@ -455,6 +455,11 @@
     </div>
   </div>
   <!-- mew form -->
-  <r-form [setDate]="setDate" *ngIf="display == 'newForm'" [user]="user">
+  <r-form
+    (submitted)="onSubmitted($event)"
+    [setDate]="setDate"
+    *ngIf="display == 'newForm'"
+    [user]="user"
+  >
   </r-form>
 </div>

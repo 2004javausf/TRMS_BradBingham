@@ -25,10 +25,6 @@ public class RFormDAOImpl implements RFormDAO {
 		String sql = "{ call INSERT_R_FORM(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		Connection conn = cf.getConnection();
 		CallableStatement call = conn.prepareCall(sql);
-//		if(rf.getSupApr() == null)
-//			System.out.println("Supervisor is null");
-//		if(rf.getHeadApr() == null)
-//			System.out.println("head is null");
 		call.setInt(1, rf.getEmpID());
 		call.setString(2, formatDate(rf.getStartDate()));
 		call.setString(3, rf.getStartTime());
@@ -100,10 +96,7 @@ public class RFormDAOImpl implements RFormDAO {
 			return sb.toString();			
 		
 	}
-
-	@Override
-	public ArrayList<RForm> getFormList() throws SQLException {
-		String sql = "SELECT * FROM R_FORMS";
+	private ArrayList<RForm> runQuery(String sql) throws SQLException{
 		Connection conn = cf.getConnection();
 		Statement stmt = conn.createStatement();
 		ResultSet rs = stmt.executeQuery(sql);
@@ -122,23 +115,15 @@ public class RFormDAOImpl implements RFormDAO {
 	}
 
 	@Override
+	public ArrayList<RForm> getFormList() throws SQLException {
+		String sql = "SELECT * FROM R_FORMS";
+		return runQuery(sql);
+	}
+
+	@Override
 	public List<RForm> getFormsById(int id) throws SQLException {
 		String sql = "SELECT * FROM R_FORMS WHERE EMPLOYEE_ID =" + id;
-		Connection conn = cf.getConnection();
-		Statement stmt = conn.createStatement();
-		ResultSet rs = stmt.executeQuery(sql);
-		RForm rf = null;
-		ArrayList<RForm> rfList = new ArrayList<>();
-		while (rs.next()) {
-			rf = new RForm(rs.getInt(1), rs.getInt(2), rs.getString(3), rs.getString(4), rs.getString(5),
-					rs.getString(6), rs.getString(7), rs.getString(8), rs.getString(9), rs.getString(10),
-					rs.getString(11), rs.getString(12), rs.getString(13), rs.getString(14), rs.getString(15),
-					rs.getDouble(16), rs.getDouble(17), rs.getString(18), rs.getString(19), rs.getInt(20),
-					rs.getString(21), rs.getString(22), rs.getDouble(23), rs.getString(24), rs.getString(25),
-					rs.getString(26),rs.getString(27));
-			rfList.add(rf);
-		}
-		return rfList;
+		return runQuery(sql);
 	}
 
 	
@@ -159,7 +144,16 @@ public class RFormDAOImpl implements RFormDAO {
 		call.close();
 	}
 
-
+	public int getNextFormId() throws SQLException {
+		String sql = "SELECT R_FORM_SEQ.NEXTVAL -1 FROM DUAL";
+		int result = 0;
+		Connection conn = cf.getConnection();
+		Statement stmt = conn.createStatement();
+		ResultSet rs = stmt.executeQuery(sql);
+		rs.next();
+		return rs.getInt(1);
+	}
+	
 	public List<RForm> getManagerEmployees(Employee em) throws SQLException{
 		String filter = "";
 		String deptFilter = "AND DEPARTMENT = '"+em.getDepartment();
@@ -201,20 +195,6 @@ public class RFormDAOImpl implements RFormDAO {
 				"R_FORMS.IS_URGENT IS_URGENT\r\n"+
 				"FROM R_FORMS INNER JOIN EMPLOYEES ON (R_FORMS.ID = EMPLOYEES.ID) \r\n" + 
 				"WHERE OFFICE_LOC = '"+em.getOfficeLoc()+"'"+filter;
-		Connection conn = cf.getConnection();
-		Statement stmt = conn.createStatement();
-		ResultSet rs = stmt.executeQuery(sql);
-		RForm rf = null;
-		ArrayList<RForm> rfList = new ArrayList<>();
-		while (rs.next()) {
-			rf = new RForm(rs.getInt(1), rs.getInt(2), rs.getString(3), rs.getString(4), rs.getString(5),
-					rs.getString(6), rs.getString(7), rs.getString(8), rs.getString(9), rs.getString(10),
-					rs.getString(11), rs.getString(12), rs.getString(13), rs.getString(14), rs.getString(15),
-					rs.getDouble(16), rs.getDouble(17), rs.getString(18), rs.getString(19), rs.getInt(20),
-					rs.getString(21), rs.getString(22), rs.getDouble(23), rs.getString(24), rs.getString(25),
-					rs.getString(26),rs.getString(27));
-			rfList.add(rf);
-		}
-		return rfList;
+		return runQuery(sql);
 	}
 }

@@ -15,22 +15,22 @@ import com.revature.util.ConnFactory;
 
 public class EmployeeDAOImpl implements EmployeeDAO {
 	public static ConnFactory cf = ConnFactory.getInstance();
-	@Override
-	public void insertEmployee(Employee e) throws SQLException {
-		String sql = "{ call INSERT_EMPLOYEE(?,?,?,?,?,?,?,?)";
-		Connection conn = cf.getConnection();
-		CallableStatement call = conn.prepareCall(sql);
-		call.setString(1, e.getFirstName());
-		call.setString(2, e.getLastName());
-		call.setString(3, e.getUsername());
-		call.setString(4, e.getPassword());
-		call.setDouble(5, e.getAvailableAmount());
-		call.setString(6, e.getTitle());
-		call.setString(7, e.getDepartment());
-		call.setString(8, e.getOfficeLoc());
-		call.execute();
-		call.close();
-	}
+//	@Override
+//	public void insertEmployee(Employee e) throws SQLException {
+//		String sql = "{ call INSERT_EMPLOYEE(?,?,?,?,?,?,?,?)";
+//		Connection conn = cf.getConnection();
+//		CallableStatement call = conn.prepareCall(sql);
+//		call.setString(1, e.getFirstName());
+//		call.setString(2, e.getLastName());
+//		call.setString(3, e.getUsername());
+//		call.setString(4, e.getPassword());
+//		call.setDouble(5, e.getAvailableAmount());
+//		call.setString(6, e.getTitle());
+//		call.setString(7, e.getDepartment());
+//		call.setString(8, e.getOfficeLoc());
+//		call.execute();
+//		call.close();
+//	}
 
 	@Override
 	public List<Employee> getEmployeeList() throws SQLException {

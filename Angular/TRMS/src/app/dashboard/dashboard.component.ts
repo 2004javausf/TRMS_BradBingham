@@ -15,7 +15,7 @@ import { StatusService } from "../status.service";
   styleUrls: ["./dashboard.component.css"],
 })
 export class DashboardComponent implements OnInit {
-  data = null;
+  data = "sample";
   display = "login";
   loggedIn = false;
   user: Employee;
@@ -109,6 +109,10 @@ export class DashboardComponent implements OnInit {
         }
       }
     });
+  }
+  onSubmitted(test) {
+    this.forms.push(test);
+    this.displayChange("forms");
   }
   displayChange(toThis) {
     if (!this.loggedIn) {
@@ -284,7 +288,7 @@ let sampleEmployee: Employee = {
 let sampleForms: Rform[] = [
   {
     id: 1,
-    empID: 1,
+    empID: 3,
     status: "Pending",
     isUrgent: null,
     supApr: "True",
@@ -295,7 +299,7 @@ let sampleForms: Rform[] = [
     coorSubDate: null,
     isAltered: "False",
     rejectMessage: null,
-    formSubDate: null,
+    formSubDate: "2021-05-21",
     startDate: "20-MAY-2021",
     startTime: "1 AM",
     location: "Here",
@@ -324,7 +328,7 @@ let sampleForms: Rform[] = [
     coorSubDate: null,
     isAltered: "True",
     rejectMessage: null,
-    formSubDate: null,
+    formSubDate: "2021-05-21",
     startDate: "20-MAY-2021",
     startTime: "1 AM",
     location: "Here",
@@ -344,7 +348,7 @@ let sampleForms: Rform[] = [
 let sampleMessages: Message[] = [
   {
     id: 1,
-    submittedOn: "20-MAY-2021",
+    submittedOn: "2021-05-21",
     sendID: 2,
     recID: 1,
     formID: 1,
@@ -352,7 +356,7 @@ let sampleMessages: Message[] = [
   },
   {
     id: 2,
-    submittedOn: "20-MAY-2021",
+    submittedOn: "2021-05-21",
     sendID: 2,
     recID: 1,
     formID: 1,

@@ -12,4 +12,7 @@ export class StatusService {
   updateForm(sc: StatusChange): Observable<any> {
     return this.http.post<StatusChange>(this.url, JSON.stringify(sc));
   }
+  getNextFormId() {
+    return this.http.get(this.url);
+  }
 }

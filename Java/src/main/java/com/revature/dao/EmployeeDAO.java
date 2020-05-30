@@ -6,7 +6,7 @@ import java.util.List;
 import com.revature.beans.Employee;
 
 public interface EmployeeDAO {
-	public void insertEmployee(Employee e) throws SQLException;
+//	public void insertEmployee(Employee e) throws SQLException;
 
 	public List<Employee> getEmployeeList() throws SQLException;
 	
