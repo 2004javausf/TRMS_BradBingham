@@ -51,4 +51,14 @@
     <servlet-name>Manage</servlet-name>
     <url-pattern>/manage</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>SystemServlet</display-name>
+    <servlet-name>SystemServlet</servlet-name>
+    <servlet-class>com.revature.servlets.SystemServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>SystemServlet</servlet-name>
+    <url-pattern>/system</url-pattern>
+  </servlet-mapping>
 </web-app>

@@ -110,4 +110,13 @@ public class EmployeeDAOImpl implements EmployeeDAO {
 		return e;
 	}
 
+	@Override
+	public void resetAvailableAmountAll() throws SQLException {
+		String sql = "UPDATE EMPLOYEES SET AVAILABLE_AMOUNT = 1000";
+		Connection conn = cf.getConnection();
+		Statement stmt = conn.createStatement();
+		stmt.executeQuery(sql);
+		
+	}
+
 }

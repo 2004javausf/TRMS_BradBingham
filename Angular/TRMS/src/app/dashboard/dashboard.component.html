@@ -48,10 +48,12 @@
       <h4>Welcome {{ user.firstName }}</h4>
       <a (click)="displayChange('forms')">My Forms</a>
       <a (click)="displayChange('newForm')">New Form</a>
-      <a (click)="displayChange('login')">Log out</a>
-      <a *ngIf="user.title != 'Associate'" (click)="displayChange('manage')"
+      <a
+        *ngIf="user.title != 'Associate' || user.department == 'Benefits'"
+        (click)="displayChange('manage')"
         >Manage</a
       >
+      <a (click)="displayChange('login')">Log out</a>
     </div>
     <div class="infoBox col">
       <p>available amount ${{ availableReinbursement }}</p>
@@ -66,17 +68,20 @@
       <li *ngFor="let item of forms">
         <div class="btnBox">
           <button (click)="focusOn(item)">View</button>
+          {{ item.formSubDate.substr(5, 5) }}
         </div>
-        <div class="msgBox">
-          FormID: {{ item.id }} Status: {{ item.status }}
-        </div>
+        <div class="msgBox">ID: {{ item.id }}, Status: {{ item.status }}</div>
       </li>
     </ul>
     <ul class="col">
       <h4 class="listTitle">list for messages</h4>
       <li *ngIf="!messages">No messages</li>
       <li *ngFor="let item of messages">
-        {{ item.message }}
+        <div class="btnBox">
+          <button (click)="remove(item)">X</button>
+          {{ item.submittedOn.substr(5, 5) }}
+        </div>
+        <div class="msgBox">{{ item.message }}</div>
       </li>
     </ul>
   </div>
@@ -94,16 +99,19 @@
         </div>
       </li>
     </ul>
-    <ul class="col">
-      Something here
-    </ul>
+    <ul class="col"></ul>
   </div>
   <!-- focus form -->
   <div *ngIf="display == 'focus'">
     <div class="centerCenter">
       <div class="formBox">
         <h2>Tuition Reimbursement Form</h2>
-
+        <div
+          style="text-align: center; color: red;"
+          *ngIf="focus.isUrgent && focus.empID != user.id"
+        >
+          This is Urgent
+        </div>
         <div class="formElement">
           <p>
             Employee ID: <span>{{ focusEmployee.id }}</span>
@@ -185,14 +193,41 @@
             ></textarea>
           </label>
         </div>
-
+        <!--If Grades are submitted-->
+        <div *ngIf="focus.finalGrade" class="formElement">
+          Final Grade is {{ focus.finalGrade }}%
+        </div>
+        <div *ngIf="focus.finalPres" class="formElement">
+          <a [href]="focus.finalPres">Final Presentation</a>
+        </div>
+        <!--If Pending Starts Here-->
         <div *ngIf="focus.status == 'Pending'">
           <div *ngIf="user.id != focus.empID">
-            <div *ngIf="focus.finalGrade" class="formElement">
-              Final Grade is {{ focus.finalGrade }}%
+            <div
+              *ngIf="focus.finalGrade && focus.gradeApr == 'False'"
+              class="formElement"
+            >
+              <div class="buttonBox">
+                <button (click)="onReviewChanges('Confirm', 'Grade')">
+                  Confirm
+                </button>
+                <button (click)="onReviewChanges('Deny', 'Grade')">
+                  Deny
+                </button>
+              </div>
             </div>
-            <div *ngIf="focus.finalPres" class="formElement">
-              <a [href]="focus.finalPres">Final Presentation</a>
+            <div
+              *ngIf="focus.finalPres && focus.presApr == 'False'"
+              class="formElement"
+            >
+              <div class="buttonBox">
+                <button (click)="onReviewChanges('Confirm', 'Pres')">
+                  Confirm
+                </button>
+                <button (click)="onReviewChanges('Deny', 'Pres')">
+                  Deny
+                </button>
+              </div>
             </div>
           </div>
           <div *ngIf="user.id == focus.empID">
@@ -264,17 +299,16 @@
             </form>
           </div>
         </div>
+        <!--If Not Pending Starts Here-->
         <div *ngIf="focus.status != 'Pending'">
           <div *ngIf="user.id != focus.empID">
             <div class="buttonBox">
               <button (click)="onReviewChanges('Approved')">Approve</button>
               <button (click)="declineReason = !declineReason">Decline</button>
             </div>
+
             <div style="text-align: center;" class="formElement">
-              <button
-                *ngIf="!requestAdditional"
-                (click)="requestAdditional = !requestAdditional"
-              >
+              <button (click)="requestAdditional = !requestAdditional">
                 Request additinoal information
               </button>
               <form
@@ -283,9 +317,10 @@
                 (ngSubmit)="sendMessage(fa)"
                 *ngIf="requestAdditional"
               >
+                <!--TODO: make from employee a select with varOptions -->
                 <div class="formElement">
                   <label for="requestMessage"
-                    >to employee #{{ focus.empID }}
+                    >From employee #{{ focus.empID }}
                     <textarea
                       ngModel
                       required
@@ -316,7 +351,7 @@
               <form
                 ngForm
                 #fd="ngForm"
-                (ngSubmit)="onReviewChanges('Declined', fd)"
+                (ngSubmit)="onReviewChanges('Declined', fd.value.declineReason)"
                 *ngIf="declineReason"
               >
                 <div class="formElement">
@@ -350,6 +385,53 @@
             </div>
           </div>
 
+          <div style="text-align: center;" class="formElement">
+            <button
+              *ngIf="
+                this.user.department == 'Benefits' &&
+                this.focus.isAltered == 'False'
+              "
+              (click)="alterForm = !alterForm"
+            >
+              Override Return Amount
+            </button>
+            <form
+              ngForm
+              #fAlter="ngForm"
+              (ngSubmit)="
+                onReviewChanges('Alternative', fAlter.value.suggestAlter)
+              "
+              *ngIf="alterForm"
+            >
+              <div class="formElement">
+                <label for="suggestAlter"
+                  >to employee #{{ focus.empID }}
+                  <input
+                    ngModel
+                    required
+                    name="suggestAlter"
+                    id="suggestAlter"
+                    #suggestAlter="ngModel"
+                    type="number"
+                    [placeholder]="focus.pendingRe"
+                  />
+                </label>
+              </div>
+
+              <div class="formElement">
+                <label for="suggestSubmit">
+                  <input
+                    name="suggestSubmit"
+                    id="suggestSubmit"
+                    type="submit"
+                    [disabled]="!fAlter.valid"
+                    value="Submit"
+                  />
+                </label>
+              </div>
+            </form>
+          </div>
+
           <div *ngIf="user.id == focus.empID">
             <div *ngIf="user"></div>
 
@@ -368,9 +450,11 @@
             </div>
           </div>
         </div>
+        <!--If Not Pending Ends Here-->
       </div>
     </div>
   </div>
   <!-- mew form -->
-  <r-form *ngIf="display == 'newForm'" [user]="user"> </r-form>
+  <r-form [setDate]="setDate" *ngIf="display == 'newForm'" [user]="user">
+  </r-form>
 </div>

@@ -24,6 +24,7 @@ public class EmployeeSevlet extends HttpServlet {
 		response.setStatus(HttpServletResponse.SC_OK);
 	}
 	private void setAccessControlHeaders(HttpServletResponse response) {
+		response.setHeader("Access-Control-Allow-Headers", "*");
 		response.setHeader("Access-Control-Allow-Origin", "http://localhost:4200");
 		response.setHeader("Access-Control-Allow-Methods", "*");
 	}

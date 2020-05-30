@@ -2,6 +2,7 @@ export interface Rform {
   id: number;
   empID: number;
   status: string;
+  isUrgent: string;
   supApr: string;
   supSubDate: string;
   headApr: string;

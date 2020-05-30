@@ -4,6 +4,7 @@ public class RForm {
 	private int id;
 	private int empID;
 	private String status;
+	private String isUrgent;
 	private String supApr;
 	private String supSubDate;
 	private String headApr;
@@ -48,11 +49,12 @@ public class RForm {
 			String coorApr, String coorSubDate, String isAltered, String rejectMessage, String formSubDate,
 			String startDate, String startTime, String location, double cost, double pendingRe, String description,
 			String justification, int gradeFormatID, String eventType, String onSubmit, double finalGrade,
-			String gradeApr, String finalPres, String presApr) {
+			String gradeApr, String finalPres, String presApr,String isUrgent) {
 		super();
 		this.id = id;
 		this.empID = empID;
 		this.status = status;
+		this.isUrgent = isUrgent;
 		this.supApr = supApr;
 		this.supSubDate = supSubDate;
 		this.headApr = headApr;
@@ -104,6 +106,15 @@ public class RForm {
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	
+	public String getIsUrgent() {
+		return isUrgent;
+	}
+
+	public void setIsUrgent(String isUrgent) {
+		this.isUrgent = isUrgent;
 	}
 
 	public String getSupApr() {

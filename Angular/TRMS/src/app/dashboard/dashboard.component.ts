@@ -1,3 +1,4 @@
+import { SystemService } from "./../system.service";
 import { ManageService } from "./../manage.service";
 import { RformService } from "./../rform.service";
 import { EmployeeService } from "./../employee.service";
@@ -14,11 +15,12 @@ import { StatusService } from "../status.service";
   styleUrls: ["./dashboard.component.css"],
 })
 export class DashboardComponent implements OnInit {
-  data = "sample";
+  data = null;
   display = "login";
   loggedIn = false;
   user: Employee;
   availableReinbursement: number;
+  setDate = null;
 
   calculatedAmount() {
     let pendingAmount = 0;
@@ -33,8 +35,81 @@ export class DashboardComponent implements OnInit {
     private employeeService: EmployeeService,
     private rformService: RformService,
     private statusService: StatusService,
-    private manageService: ManageService
+    private manageService: ManageService,
+    private systemService: SystemService
   ) {}
+  updateDailyDate() {
+    let d: Date;
+    if (this.setDate) {
+      d = this.setDate;
+    } else {
+      d = new Date();
+    }
+    if (d.getMonth() == 0) {
+      this.systemService.resetAllAvailable();
+    }
+    console.log(d);
+  }
+  updateIncomingForm() {
+    this.forms.forEach((x) => {
+      let sup = x.formSubDate;
+      let head = x.supSubDate;
+      let coor = x.headSubDate;
+      let today = new Date();
+
+      let testDate = new Date(
+        +sup.substr(0, 4),
+        +sup.substr(5, 2) - 1,
+        +sup.substr(8, 2) + 3
+      );
+      if (today >= testDate && x.supApr != "True") {
+        console.log("auto approve Supervisor for " + x.id);
+        let scObj = {
+          rfId: x.id,
+          empId: x.empID,
+          aprId: 0,
+          title: "Supervisor",
+          newStatus: "True",
+          reason: null,
+        };
+        this.statusService.updateForm(scObj).subscribe();
+        return;
+      }
+
+      if (head != null) {
+        let testDate = new Date(
+          +head.substr(0, 4),
+          +head.substr(5, 2) - 1,
+          +head.substr(8, 2) + 3
+        );
+        if (today >= testDate && x.headApr != "True") {
+          console.log("auto approve Head for " + x.id);
+          let scObj = {
+            rfId: x.id,
+            empId: x.empID,
+            aprId: 0,
+            title: "Head",
+            newStatus: "True",
+            reason: null,
+          };
+          this.statusService.updateForm(scObj).subscribe();
+          return;
+        }
+      }
+
+      if (coor != null) {
+        let testDate = new Date(
+          +head.substr(0, 4),
+          +head.substr(5, 2) - 1,
+          +head.substr(8, 2) + 3
+        );
+        if (today >= testDate && x.coorApr != "True") {
+          console.log("BenCo needs to hurry up with " + x.id);
+          return;
+        }
+      }
+    });
+  }
   displayChange(toThis) {
     if (!this.loggedIn) {
       //TODO: remove this top if clause when ready to go live, tested
@@ -42,7 +117,10 @@ export class DashboardComponent implements OnInit {
         this.forms = sampleForms;
         this.messages = sampleMessages;
         this.calculatedAmount();
-        if (this.user.title != "Associate") {
+        if (
+          this.user.title != "Associate" ||
+          this.user.department == "Benefits"
+        ) {
           this.manageService
             .getManageForms(this.user)
             .subscribe((res) => (this.manageForms = res));
@@ -55,6 +133,7 @@ export class DashboardComponent implements OnInit {
         this.rformService.getByUserId(this.user.id).subscribe((res) => {
           this.forms = res;
           this.calculatedAmount();
+          this.updateIncomingForm();
         });
         if (this.user.title != "Associate") {
           this.manageService
@@ -101,6 +180,7 @@ export class DashboardComponent implements OnInit {
   manageForms: Rform[];
   requestAdditional: boolean = false;
   declineReason: boolean = false;
+  alterForm: boolean = false;
 
   //TODO: fix focus on focus employee
   focusOn(item: Rform) {
@@ -110,18 +190,21 @@ export class DashboardComponent implements OnInit {
     if (item.finalGrade || item.finalPres) {
       this.alreadySubmitted = true;
     }
-    if (this.user.id == this.focus.id) {
+    if (this.user.id == this.focus.empID) {
       this.focusEmployee = this.user;
     } else {
-      //TODO: test employee services and switch
       if (this.data == "sample") {
         this.focusEmployee = this.user;
       } else {
         this.employeeService
-          .getEmployee(this.focus.id)
+          .getEmployee(this.focus.empID)
           .subscribe((res) => (this.focusEmployee = res));
       }
     }
+  }
+  remove(item: Rform) {
+    console.log("remove " + item.id);
+    this.messages = this.messages.filter((x) => x.id != item.id);
   }
   goBack() {
     //TODO: make back button for forms
@@ -138,20 +221,31 @@ export class DashboardComponent implements OnInit {
     };
     this.messageService.sendMessage(msObj).subscribe((res) => console.log(res));
   }
-  onReviewChanges(input, reason?) {
+  onReviewChanges(input, additional?) {
     let scObj = {
       rfId: this.focus.id,
       empId: this.focus.empID,
       aprId: this.user.id,
       title: this.user.title,
       newStatus: input,
-      reason: reason.value.declineReason,
+      reason: null,
     };
+    if (additional) {
+      scObj.reason = additional;
+    }
     console.log(scObj);
     if (input == "Canceled") {
       this.statusService.updateForm(scObj).subscribe((res) => {});
       this.focus.status = "Canceled";
       this.focus.isAltered = "Canceled";
+    } else if (input == "Confirm" || input == "Deny") {
+      this.statusService.updateForm(scObj).subscribe((res) => {});
+      this.focus.status = input;
+      if (scObj.reason == "Grade") {
+        this.focus.gradeApr = input;
+      } else {
+        this.focus.presApr = input;
+      }
     } else {
       this.statusService.updateForm(scObj).subscribe((res) => {});
       this.focus.isAltered = input;
@@ -172,7 +266,9 @@ export class DashboardComponent implements OnInit {
   finalGradePost(input) {
     console.log(input.value);
   }
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.updateDailyDate();
+  }
 }
 let sampleEmployee: Employee = {
   id: 3,
@@ -182,7 +278,7 @@ let sampleEmployee: Employee = {
   password: "Pass1",
   availableAmount: 1000,
   title: "Supervisor",
-  department: "Sales",
+  department: "IT",
   officeLoc: "Main",
 };
 let sampleForms: Rform[] = [
@@ -190,11 +286,12 @@ let sampleForms: Rform[] = [
     id: 1,
     empID: 1,
     status: "Pending",
-    supApr: "False",
+    isUrgent: null,
+    supApr: "True",
     supSubDate: null,
-    headApr: "False",
+    headApr: "True",
     headSubDate: null,
-    coorApr: "False",
+    coorApr: "True",
     coorSubDate: null,
     isAltered: "False",
     rejectMessage: null,
@@ -211,13 +308,14 @@ let sampleForms: Rform[] = [
     onSubmit: null,
     finalGrade: null,
     gradeApr: "False",
-    finalPres: "www.someplace.fjio",
+    finalPres: "wwfi.fijdf.efi",
     presApr: "False",
   },
   {
     id: 6,
     empID: 3,
     status: "Pending",
+    isUrgent: "True",
     supApr: "False",
     supSubDate: null,
     headApr: "False",

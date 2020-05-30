@@ -17,7 +17,5 @@ public interface RFormDAO {
 	
 	public void updateStatus(StatusChange sc) throws SQLException;
 	
-	public void finalizeStatus(int rfId, int empId, double grade, String presentation) throws SQLException;
-	
 	public List<RForm> getManagerEmployees(Employee em) throws SQLException;
 }
