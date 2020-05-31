@@ -44,6 +44,7 @@ public class EmployeeSevlet extends HttpServlet {
 				response.setContentType("application/json");
 				response.setCharacterEncoding("UTF-8");
 				pw.print(emJSON);
+				
 			} catch (JsonProcessingException e) {
 				e.printStackTrace();
 			} catch (SQLException e) {

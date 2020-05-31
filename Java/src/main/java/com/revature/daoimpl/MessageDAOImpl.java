@@ -28,6 +28,7 @@ public class MessageDAOImpl implements MessageDAO {
 		call.setString(4, m.getMessage());
 		call.execute();
 		call.close();
+		conn.close();
 		
 	}
 
@@ -50,6 +51,7 @@ public class MessageDAOImpl implements MessageDAO {
 					);
 			mList.add(m);
 		}
+		conn.close();
 		return mList;
 	}
 	
@@ -73,6 +75,16 @@ public class MessageDAOImpl implements MessageDAO {
 							);
 					mList.add(m);
 				}
+				conn.close();
 				return mList;
+			}
+
+			@Override
+			public void deleteMessage(String id) throws SQLException {
+				String sql="DELETE FROM MESSAGES WHERE ID ="+id;
+				Connection conn = cf.getConnection();
+				Statement stmt = conn.createStatement();
+				stmt.executeQuery(sql);
+				conn.close();
 			}
 }

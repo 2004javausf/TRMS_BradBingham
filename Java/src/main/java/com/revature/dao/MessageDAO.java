@@ -12,4 +12,6 @@ public interface MessageDAO {
 	public List<Message> getMessageList() throws SQLException;
 	
 	public List<Message> getMessagesById(int id) throws SQLException;
+	
+	public void deleteMessage(String id) throws SQLException;
 }

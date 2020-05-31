@@ -10,7 +10,6 @@ import { StatusService } from "../status.service";
 })
 export class RFormComponent implements OnInit {
   @Input("user") user: Employee;
-  @Input("setDate") setDate: Date;
   @Output() submitted = new EventEmitter();
   //TODO: make this caluculate estimated amount
   available;
@@ -48,7 +47,6 @@ export class RFormComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    console.log(this.setDate);
     this.pendingAmount = 0;
     this.available = this.user.availableAmount;
   }
@@ -65,44 +63,44 @@ export class RFormComponent implements OnInit {
       new Date().getMonth(),
       new Date().getDate() + 14
     );
-    if (this.setDate) {
-      d1 = this.setDate;
-    } else {
-      d1 = new Date(
-        new Date().getFullYear(),
-        new Date().getMonth(),
-        new Date().getDate() + 7
-      );
-    }
+
+    d1 = new Date(
+      new Date().getFullYear(),
+      new Date().getMonth(),
+      new Date().getDate() + 7
+    );
+
     if (d1 >= d2) {
-      alert("this cannot be submitted");
+      alert("Start date must be further than 1 week from today");
     } else {
       if (this.user.title == "Supervisor" || this.user.title == "Head") {
-        f.value.supApr = "True";
+        f.value.supApr = "Approved";
         f.value.supSubDate = new Date();
       }
       if (this.user.title == "Head") {
-        f.value.headApr = "True";
+        f.value.headApr = "Approved";
         f.value.headSubDate = new Date();
       }
       f.value.empID = this.user.id;
       f.value.pendingRe = this.pendingAmount;
       f.value.formSubDate = new Date().toISOString();
       f.value.status = "In-review";
-      //TODO: test if this works live
-
       if (d3 >= d2) {
-        //TODO:notify submitted as urgent
         f.value.isUrgent = "True";
       } else {
         f.value.isUrgent = "False";
       }
       this.statusService.getNextFormId().subscribe((res) => {
         if (res > 0) {
-          console.log("trying to get currval");
-          f.value.id = res;
+          f.value.id = +res + 1;
+        } else {
+          f.value.id = 1;
         }
-        window.alert("Succesfully submitted");
+        if (f.value.isUrgent == "True") {
+          window.alert("Sucessfully submitted as urgent");
+        } else {
+          window.alert("Succesfully submitted");
+        }
         console.log(f.value);
         this.submitted.emit(f.value);
         this.rformService.postNewForm(f.value).subscribe();

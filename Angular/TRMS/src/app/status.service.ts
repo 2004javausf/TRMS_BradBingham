@@ -9,10 +9,12 @@ import { StatusChange } from "./templates/statusChange";
 export class StatusService {
   private url = "http://localhost:8080/TRMS/status";
   constructor(private http: HttpClient) {}
+
   updateForm(sc: StatusChange): Observable<any> {
     return this.http.post<StatusChange>(this.url, JSON.stringify(sc));
   }
-  getNextFormId() {
+
+  getNextFormId(): Observable<any> {
     return this.http.get(this.url);
   }
 }

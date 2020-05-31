@@ -1,6 +1,5 @@
 package com.revature.daoimpl;
 
-import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -9,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.revature.beans.Employee;
-import com.revature.beans.RForm;
 import com.revature.dao.EmployeeDAO;
 import com.revature.util.ConnFactory;
 
@@ -54,6 +52,7 @@ public class EmployeeDAOImpl implements EmployeeDAO {
 					);
 			eList.add(e);
 		}
+		conn.close();
 		return eList;
 	}
 
@@ -80,7 +79,15 @@ public class EmployeeDAOImpl implements EmployeeDAO {
 		} catch (SQLException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
+		} finally {
+			try {
+				conn.close();
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 		}
+		
 		return e;
 	}
 	public Employee getEmployeeById(String filter) {
@@ -106,6 +113,13 @@ public class EmployeeDAOImpl implements EmployeeDAO {
 		} catch (SQLException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
+		} finally {
+			try {
+				conn.close();
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 		}
 		return e;
 	}
@@ -116,6 +130,7 @@ public class EmployeeDAOImpl implements EmployeeDAO {
 		Connection conn = cf.getConnection();
 		Statement stmt = conn.createStatement();
 		stmt.executeQuery(sql);
+		conn.close();
 		
 	}
 

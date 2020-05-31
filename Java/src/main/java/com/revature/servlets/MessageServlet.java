@@ -82,5 +82,22 @@ public class MessageServlet extends HttpServlet {
 			e.printStackTrace();
 		}
 	}
+	@Override
+	protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		setAccessControlHeaders(response);
+		setAccessControlHeaders(response);
+		System.out.println("In doDelete MessageServlet");
+		String filter = request.getPathInfo().substring(1);
+		MessageDAOImpl mdi = new MessageDAOImpl();
+		try {
+			mdi.deleteMessage(filter);
+			System.out.println(filter);
+			System.out.println("success");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
 
 }

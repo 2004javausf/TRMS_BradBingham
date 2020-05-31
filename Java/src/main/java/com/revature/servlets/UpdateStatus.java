@@ -48,7 +48,7 @@ public class UpdateStatus extends HttpServlet {
 	
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		setAccessControlHeaders(response);
-		System.out.println("In doPostUpdateStatusServlet");
+		System.out.println("In doPost UpdateStatusServlet");
 				StatusChange sc = null;
 				ObjectMapper mapper = new ObjectMapper();
 				//convert JSON to java object
@@ -56,9 +56,6 @@ public class UpdateStatus extends HttpServlet {
 					RFormDAOImpl rdi = new RFormDAOImpl();
 					try {
 						rdi.updateStatus(sc);
-						PrintWriter pw = response.getWriter();
-						pw.print("updated");
-						pw.close();
 					} catch (SQLException e) {
 						e.printStackTrace();
 					}

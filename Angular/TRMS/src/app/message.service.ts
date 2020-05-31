@@ -18,4 +18,7 @@ export class MessageService {
   sendMessage(ms: Message) {
     return this.http.post(this.url, JSON.stringify(ms));
   }
+  deleteMessage(id) {
+    return this.http.delete(this.url + id);
+  }
 }
