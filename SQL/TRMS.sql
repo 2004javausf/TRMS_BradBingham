@@ -180,7 +180,11 @@ EXECUTE INSERT_EMPLOYEE('UserFour','IsBenCo','User4','4',700,'Associate','Benefi
 EXECUTE INSERT_EMPLOYEE('UserFive','LastNm','User5','5',600,'Supervisor','IT','East');
 EXECUTE INSERT_EMPLOYEE('UserSix','LastNm','User6','6',500,'Associate','Sales','Main');
 
-
+--SENDER_EMPLOYEE_ID NUMBER,RECIPIANT_EMPLOYEE_ID NUMBER,R_FORM_ID NUMBER,MESSAGE VARCHAR2
+TRUNCATE TABLE MESSAGES;
+DROP SEQUENCE MESSAGE_SEQ;
+CREATE SEQUENCE MESSAGE_SEQ
+  INCREMENT BY 1 MAXVALUE 5000 CYCLE;
 
 --EMPLOYEE_ID NUMBER,START_DATE DATE,START_TIME VARCHAR2,EVENT_LOCATION VARCHAR2,EVENT_COST NUMBER,PENDING_REIMBURSEMENT,
 --EVENT_DESCRIPTION VARCHAR2,EVENT_JUSTIFY VARCHAR2,GRADING_FORMAT_ID NUMBER,EVENT_TYPE VARCHAR2,OPT_ON_SUBMIT BLOB
@@ -188,36 +192,21 @@ TRUNCATE TABLE R_FORMS;
 DROP SEQUENCE R_FORM_SEQ;
 CREATE SEQUENCE R_FORM_SEQ
   INCREMENT BY 1 MAXVALUE 5000 CYCLE;
-EXECUTE INSERT_R_FORM(1,'01-MAY-2021','1 AM','Leader School',1000,800,'School for leader','I will lead better',1,'University Course',NULL,null,null,null,null,null);
+EXECUTE INSERT_R_FORM(1,'01-MAY-2021','1 AM','Leader School',1000,800,'School for leader','I will lead better',2,'University Course',NULL,null,null,null,null,null);
 
-EXECUTE INSERT_R_FORM(2,'01-MAY-2021','2 AM','Supervisor Seminar',900,700,'Seminar for Supervisors','It will help',2,'Seminar',NULL,null,null,null,null,null);
-EXECUTE INSERT_R_FORM(3,'01-MAY-2021','3 PM','Associate prep class',800,600,'Prep class for associates','It will help',3,'Certification Prep Class',NULL,'True',null,null,null,null);
-EXECUTE INSERT_R_FORM(3,'01-MAY-2021','4 PM','Associate Certification',600,500,'Certification for Associates','It will help',4,'Certification',NULL,null,null,null,null,null);
-EXECUTE INSERT_R_FORM(3,'01-MAY-2021','5 PM','Associate Technical Training',500,400,'Technical Training for Associates','It will help',5,'Technical Training',NULL,null,null,null,null,null);
-EXECUTE INSERT_R_FORM(3,'01-MAY-2021','6 PM','Associate therapy',400,300,'Therapy for Associates','It will help',5,'Other',NULL,'True',null,null,null,null);
---R_FORM_ID ,EMP_ID ,APPROVER_ID, title ,NEW_STATUS , REASON 
-EXECUTE R_FORM_STATUS_CHANGE(1,1,1,'Supervisor','Approved',NULL);
-EXECUTE R_FORM_STATUS_CHANGE(3,3,2,'Supervisor','Approved',NULL);
-EXECUTE R_FORM_STATUS_CHANGE(3,3,1,'Head','Approved',NULL);
-EXECUTE R_FORM_STATUS_CHANGE(6,3,3,'Associate','Canceled',NULL);
 
---SENDER_EMPLOYEE_ID NUMBER,RECIPIANT_EMPLOYEE_ID NUMBER,R_FORM_ID NUMBER,MESSAGE VARCHAR2
-TRUNCATE TABLE MESSAGES;
-DROP SEQUENCE MESSAGE_SEQ;
-CREATE SEQUENCE MESSAGE_SEQ
-  INCREMENT BY 1 MAXVALUE 5000 CYCLE;
-EXECUTE INSERT_MESSAGE(2,3,4,'message one from User2');
-EXECUTE INSERT_MESSAGE(0,3,3,'message two from System');
-EXECUTE INSERT_MESSAGE(3,2,4,'message three from User3');
-EXECUTE INSERT_MESSAGE(1,2,3,'message four from User1');
-EXECUTE INSERT_MESSAGE(0,2,3,'message five from System');
-EXECUTE INSERT_MESSAGE(2,1,4,'message six from User2');
-EXECUTE INSERT_MESSAGE(0,1,3,'message seven from System');
+
+
 -----------------------------------------------------------
 SELECT * FROM R_FORMS INNER JOIN EMPLOYEES ON (R_FORMS.EMPLOYEE_ID = EMPLOYEES.ID) 
 WHERE OFFICE_LOC = 'Main'AND DEPARTMENT = 'IT' AND (r_forms.approve_supervisor IS NULL OR r_forms.form_status = 'Pending');
 
 SELECT * FROM R_FORMS INNER JOIN EMPLOYEES ON (R_FORMS.EMPLOYEE_ID = EMPLOYEES.ID) 
-WHERE Employees.OFFICE_LOC = 'Main' ;
+WHERE Employees.OFFICE_LOC = 'Main' 
+AND
+(R_FORMS.FORM_STATUS = 'In-review' AND r_forms.approve_head = 'Approved')
+OR
+(R_FORMS.FORM_STATUS = 'Pending' AND R_FORMS.GRADING_FORMAT_ID >3);
+
 
 UPDATE R_FORMS SET APPROVE_Supervisor = 'Declined',Supervisor_SUBMIT_DATE = CURRENT_TIMESTAMP, REJECTION_JUSTIFY = 'here is my reason', FORM_STATUS = 'Denied' WHERE ID =4

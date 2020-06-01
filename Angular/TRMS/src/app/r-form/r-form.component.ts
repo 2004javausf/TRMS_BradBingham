@@ -11,6 +11,7 @@ import { StatusService } from "../status.service";
 export class RFormComponent implements OnInit {
   @Input("user") user: Employee;
   @Output() submitted = new EventEmitter();
+  @Input() availableReinbursement: number;
   //TODO: make this caluculate estimated amount
   available;
   pendingAmount;
@@ -26,7 +27,11 @@ export class RFormComponent implements OnInit {
       6: 0.3,
     };
     let num = this.cost * percent[this.eventType];
-    this.pendingAmount = num.toFixed(2);
+    if (num > this.availableReinbursement) {
+      this.pendingAmount = this.availableReinbursement;
+    } else {
+      this.pendingAmount = num.toFixed(2);
+    }
   }
   setCost(input) {
     this.cost = input;

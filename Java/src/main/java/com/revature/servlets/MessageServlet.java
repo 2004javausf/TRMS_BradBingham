@@ -75,9 +75,7 @@ public class MessageServlet extends HttpServlet {
 		MessageDAOImpl mdi = new MessageDAOImpl();
 		try {
 			mdi.insertMessage(ms);
-			PrintWriter pw = response.getWriter();
-			pw.write("Added Message");
-			pw.close();
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

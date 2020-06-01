@@ -8,7 +8,7 @@ import { Component, OnInit, Input } from "@angular/core";
 import { MessageService } from "../message.service";
 import { Rform } from "../templates/rform";
 import { StatusService } from "../status.service";
-import { IfStmt } from "@angular/compiler";
+import { IfStmt, ThrowStmt } from "@angular/compiler";
 
 //TODO: make a links conditional style active/hover
 
@@ -19,11 +19,15 @@ import { IfStmt } from "@angular/compiler";
 })
 export class DashboardComponent implements OnInit {
   data = null;
+  // login
   display = "login";
   loggedIn = false;
   user: Employee;
   availableReinbursement: number;
-
+  options: number = 0;
+  onOptionChange($event) {
+    this.options = $event.target.value;
+  }
   calculatedAmount() {
     let pendingAmount = 0;
     this.forms
@@ -117,47 +121,42 @@ export class DashboardComponent implements OnInit {
 
   displayChange(toThis) {
     if (!this.loggedIn) {
-      if (this.data == "sample") {
-        this.forms = sampleForms;
-        this.messages = sampleMessages;
-        this.calculatedAmount();
-        if (
-          this.user.title != "Associate" ||
-          this.user.department == "Benefits"
-        ) {
-          //TODO: create sample mangeForms
-        }
-        this.loggedIn = true;
-      } else {
-        //live logic
-        this.messageService.getByUserId(this.user.id).subscribe((res) => {
-          res.forEach((x) => this.messages.push(x));
-          if (this.messages.length == 0) {
-            this.myMessagesMessage = "No messages";
-          }
-        });
-        this.rformService.getByUserId(this.user.id).subscribe((res) => {
-          res.forEach((x) => this.forms.push(x));
-          this.calculatedAmount();
-          if (this.forms.length == 0) {
-            this.myFormsMessage = "No Forms";
-          }
-        });
-        if (
-          this.user.title != "Associate" ||
-          this.user.department == "Benefits"
-        ) {
-          this.manageService.getManageForms(this.user).subscribe((res) => {
-            this.manageForms = res.filter((x) => x.empID != this.user.id);
-            if (this.manageForms.length > 0) {
-              this.autoMessageReviewForms();
-            }
+      //live logic
+      this.messageService.getByUserId(this.user.id).subscribe((res) => {
+        res.forEach((x) => this.messages.push(x));
+        if (this.messages.length == 0) {
+          this.myMessagesMessage = "No messages";
+        } else {
+          this.messages = this.messages.sort((a, b) => {
+            return a.id - b.id;
           });
         }
-        //TODO: update manage forms to correct location
-        // this.updateIncomingForm();
-        this.loggedIn = true;
+      });
+      this.rformService.getByUserId(this.user.id).subscribe((res) => {
+        res.forEach((x) => this.forms.push(x));
+        this.calculatedAmount();
+        if (this.forms.length == 0) {
+          this.myFormsMessage = "No Forms";
+        } else {
+          this.forms = this.forms.sort((a, b) => {
+            return a.id - b.id;
+          });
+        }
+      });
+      if (
+        this.user.title != "Associate" ||
+        this.user.department == "Benefits"
+      ) {
+        this.manageService.getManageForms(this.user).subscribe((res) => {
+          this.manageForms = res.filter((x) => x.empID != this.user.id);
+          if (this.manageForms.length > 0) {
+            this.autoMessageReviewForms();
+          }
+        });
       }
+      //TODO: update manage forms to correct location
+      // this.updateIncomingForm();
+      this.loggedIn = true;
     }
     if (toThis == "login") {
       this.messages = [];
@@ -167,12 +166,12 @@ export class DashboardComponent implements OnInit {
       this.manageForms = null;
     }
     this.focus = null;
-    this.alreadySubmitted = null;
     this.focusEmployee = null;
     this.display = toThis;
     this.requestAdditional = false;
     this.declineReason = false;
     this.alterForm = false;
+    this.options = 0;
   }
 
   autoMessageReviewForms() {
@@ -189,18 +188,13 @@ export class DashboardComponent implements OnInit {
 
   //login component
   submit(f) {
-    if (this.data == "sample") {
-      this.user = sampleEmployee;
-      this.displayChange("forms");
-    } else {
-      this.employeeService.validateUser(f.value).subscribe(
-        (res) => {
-          this.user = res;
-          this.displayChange("forms");
-        },
-        (error) => window.alert("incorrect username/password")
-      );
-    }
+    this.employeeService.validateUser(f.value).subscribe(
+      (res) => {
+        this.user = res;
+        this.displayChange("forms");
+      },
+      (error) => window.alert("incorrect username/password")
+    );
   }
 
   //myforms comoponent
@@ -214,32 +208,42 @@ export class DashboardComponent implements OnInit {
   requestAdditional: boolean = false;
   declineReason: boolean = false;
   alterForm: boolean = false;
-  alreadySubmitted;
   isThinking: boolean = false;
+
+  eventType(input) {
+    let swap = {
+      1: "University Course",
+      2: "Seminar",
+      3: "Certification Prep Class",
+      4: "Certification",
+      5: "Technical Training",
+      6: "Other",
+    };
+    return swap[input];
+  }
 
   //TODO: fix focus on focus employee
   focusOn(item: Rform) {
     this.displayChange("focus");
     this.focus = item;
-    if (item.finalGrade || item.finalPres) {
-      this.alreadySubmitted = true;
-    }
     if (this.user.id == this.focus.empID) {
       this.focusEmployee = this.user;
     } else {
-      if (this.data == "sample") {
-        this.focusEmployee = this.user;
-      } else {
-        this.employeeService
-          .getEmployee(this.focus.empID)
-          .subscribe((res) => (this.focusEmployee = res));
-      }
+      this.employeeService
+        .getEmployee(this.focus.empID)
+        .subscribe((res) => (this.focusEmployee = res));
     }
   }
 
   remove(item: Message) {
+    this.isThinking = true;
     this.messages = this.messages.filter((x) => x.id != item.id);
-    this.messageService.deleteMessage(item.id).subscribe();
+    this.messageService.deleteMessage(item.id).subscribe((res) => {
+      this.isThinking = false;
+      if (this.messages.length == 0) {
+        this.myMessagesMessage = "No messages";
+      }
+    });
   }
   goBack() {
     //TODO: maybe make back button for forms
@@ -255,7 +259,10 @@ export class DashboardComponent implements OnInit {
       formID: this.focus.id,
       message: input.value.requestMessage,
     };
-    this.messageService.sendMessage(msObj).subscribe((res) => console.log(res));
+    this.messageService.sendMessage(msObj).subscribe((res) => {
+      window.alert("Successfully Submitted");
+      this.displayChange("manage");
+    });
   }
 
   makeStatusChangeObj(input, additional?) {
@@ -268,7 +275,7 @@ export class DashboardComponent implements OnInit {
       reason: null,
     };
     if (additional) {
-      scObj.reason = additional;
+      scObj.reason = String(additional);
     }
     return scObj;
   }
@@ -276,17 +283,26 @@ export class DashboardComponent implements OnInit {
   submitFormElement(input, additional) {
     let x = this.makeStatusChangeObj(input, additional);
     this.isThinking = true;
-    this.statusService.updateForm(input).subscribe((x) => {
+    console.log(x);
+    this.statusService.updateForm(x).subscribe((res) => {
+      window.alert("Successfully Submitted");
       this.isThinking = false;
       switch (input) {
         case "SubmitFinalGrade":
           console.log("in SubmitFinalGrade");
+          this.focus.finalGrade = additional;
+          this.displayChange("forms");
           break;
         case "SubmitFinalPres":
           console.log("in SubmitFinalPres");
+          this.focus.finalPres = additional;
+          this.displayChange("forms");
           break;
         case "AlterForm":
           console.log("in AlterForm");
+          this.focus.isAltered = "True";
+          this.focus.pendingRe = additional;
+          this.displayChange("manage");
           break;
 
         default:
@@ -317,26 +333,41 @@ export class DashboardComponent implements OnInit {
           break;
         case "AcceptBenCoOffer":
           console.log("in AcceptBenCoOffer");
-
+          this.focus.isAltered = "Approved";
+          this.displayChange("forms");
           break;
         case "DeclineBenCoOffer":
           console.log("in DeclineBenCoOffer");
+          this.focus.isAltered = "Declined";
+          this.displayChange("forms");
           break;
         case "ConfirmGrade":
           console.log("in ConfirmGrade");
-
+          this.manageForms = this.manageForms.filter(
+            (x) => x.id != this.focus.id
+          );
+          this.displayChange("manage");
           break;
         case "RejectGrade":
           console.log("in RejectGrade");
-
+          this.manageForms = this.manageForms.filter(
+            (x) => x.id != this.focus.id
+          );
+          this.displayChange("manage");
           break;
         case "ConfirmPres":
           console.log("in ConfirmPres");
-
+          this.manageForms = this.manageForms.filter(
+            (x) => x.id != this.focus.id
+          );
+          this.displayChange("manage");
           break;
         case "RejectPres":
           console.log("in RejectPres");
-
+          this.manageForms = this.manageForms.filter(
+            (x) => x.id != this.focus.id
+          );
+          this.displayChange("manage");
           break;
         default:
           break;
@@ -358,107 +389,3 @@ export class DashboardComponent implements OnInit {
     // this.updateDailyDate();
   }
 }
-
-let sampleEmployee: Employee = {
-  id: 3,
-  firstName: "FrstNm",
-  lastName: "LstNM",
-  username: "User1",
-  password: "Pass1",
-  availableAmount: 1000,
-  title: "Supervisor",
-  department: "IT",
-  officeLoc: "Main",
-};
-let sampleForms: Rform[] = [
-  {
-    id: 1,
-    empID: 3,
-    status: "Pending",
-    isUrgent: null,
-    supApr: "True",
-    supSubDate: null,
-    headApr: "True",
-    headSubDate: null,
-    coorApr: "True",
-    coorSubDate: null,
-    isAltered: "False",
-    rejectMessage: null,
-    formSubDate: "2021-05-21",
-    startDate: "20-MAY-2021",
-    startTime: "1 AM",
-    location: "Here",
-    cost: 300,
-    pendingRe: 200,
-    description: "description",
-    justification: "justifucation",
-    gradeFormatID: 2,
-    eventType: "College Course",
-    onSubmit: null,
-    finalGrade: null,
-    gradeApr: "False",
-    finalPres: "wwfi.fijdf.efi",
-    presApr: "False",
-  },
-  {
-    id: 6,
-    empID: 3,
-    status: "Pending",
-    isUrgent: "True",
-    supApr: "False",
-    supSubDate: null,
-    headApr: "False",
-    headSubDate: null,
-    coorApr: "False",
-    coorSubDate: null,
-    isAltered: "True",
-    rejectMessage: null,
-    formSubDate: "2021-05-21",
-    startDate: "20-MAY-2021",
-    startTime: "1 AM",
-    location: "Here",
-    cost: 400,
-    pendingRe: 300,
-    description: "description",
-    justification: "justifucation",
-    gradeFormatID: 3,
-    eventType: "College Course",
-    onSubmit: null,
-    finalGrade: null,
-    gradeApr: "False",
-    finalPres: null,
-    presApr: "False",
-  },
-];
-let sampleMessages: Message[] = [
-  {
-    id: 1,
-    submittedOn: "2021-05-21",
-    sendID: 2,
-    recID: 1,
-    formID: 1,
-    message: "message one",
-  },
-  {
-    id: 2,
-    submittedOn: "2021-05-21",
-    sendID: 2,
-    recID: 1,
-    formID: 1,
-    message: "message two",
-  },
-];
-let sampleChangeStatus = {
-  rfId: 5,
-  empId: 3,
-  aprId: 3,
-  title: "Associate",
-  newStatus: "Canceled",
-  reason: "here is my reason",
-};
-// {	"rfId":5,
-// 	"empId":3,
-// 	"aprId":3,
-// 	"title":"Associate",
-// 	"newStatus":"Accept",
-// 	"reason": "here is my reason"}

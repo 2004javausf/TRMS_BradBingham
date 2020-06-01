@@ -75,9 +75,7 @@ public class RFormServlet extends HttpServlet {
 				RFormDAOImpl rdi = new RFormDAOImpl();
 				try {
 					rdi.insertForm(rf);
-					PrintWriter pw = response.getWriter();
-					pw.write("submitted");
-					pw.close();
+					
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}

@@ -152,7 +152,7 @@ public class RFormDAOImpl implements RFormDAO {
 		
 	}
 	
-	private void sendMessage(StatusChange sc, String msg) throws SQLException{
+	private void sendMessageInner(StatusChange sc, String msg) throws SQLException{
 		Connection conn = cf.getConnection();
 		try {
 			String message;
@@ -165,10 +165,10 @@ public class RFormDAOImpl implements RFormDAO {
 					+ "?)";
 			
 			PreparedStatement ps = conn.prepareStatement(message);
-			ps.setInt(1, sc.getAprId());
-			ps.setInt(2, sc.getEmpId());
-			ps.setInt(3, sc.getRfId());
-			ps.setString(4, msg);
+			ps.setInt(1, sc.getAprId());//sender
+			ps.setInt(2, sc.getEmpId());//recip
+			ps.setInt(3, sc.getRfId());//form
+			ps.setString(4, msg);//mess
 			ps.executeUpdate();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -177,6 +177,13 @@ public class RFormDAOImpl implements RFormDAO {
 			conn.close();
 		}
 		
+	}
+	private void sendMessage(StatusChange sc, String msg) throws SQLException{
+		sendMessageInner( sc,  msg);
+	}
+	private void sendMessageToBenCo(StatusChange sc, String msg) throws SQLException{
+		StatusChange sc2 = new StatusChange(sc.getRfId(),4, sc.getEmpId(), sc.getTitle(), sc.getNewStatus(), sc.getReason());
+		sendMessageInner( sc2,  msg);
 	}
 	
 	@Override
@@ -196,7 +203,17 @@ public class RFormDAOImpl implements RFormDAO {
 				+ "Supervisor_SUBMIT_DATE = CURRENT_TIMESTAMP,"
 				+ "REJECTION_JUSTIFY = '"+sc.getReason()+"', "
 				+ "FORM_STATUS = 'Denied' WHERE ID ="+sc.getRfId();
-				sendMessage(sc, "Supervisor "+sc.getAprId()+" declined form #"+sc.getRfId()+"\n"+sc.getReason());
+				sendMessage(sc, "Supervisor "+sc.getAprId()+" declined form #"+sc.getRfId());
+				break;
+			case "AcceptBenCoOffer": 
+			sql = "UPDATE R_FORMS SET ALTERED_FORM = 'Approved',"
+				+ "FORM_STATUS = 'In-review' WHERE ID ="+sc.getRfId();
+				sendMessageToBenCo(sc, "Associate "+sc.getAprId()+" accepted alternate offer on form #"+sc.getRfId());
+				break;
+			case "DeclineBenCoOffer":
+			sql = "UPDATE R_FORMS SET ALTERED_FORM = 'Declined',"
+				+ "FORM_STATUS = 'Canceled' WHERE ID ="+sc.getRfId();
+				sendMessageToBenCo(sc, "Associate "+sc.getAprId()+" delined alternate offer on form #"+sc.getRfId());
 				break;
 			case "ConfirmGrade": 
 			sql = "UPDATE R_FORMS SET FORM_STATUS = 'Approved' "
@@ -205,11 +222,11 @@ public class RFormDAOImpl implements RFormDAO {
 				sendMessage(sc, "Reienbursement from form #"+sc.getRfId()+" has been awarded");
 				break;
 			case "RejectGrade":
-			sql = "UPDATE R_FORMS SET FORM_STATUS = 'Rejected',"
+			sql = "UPDATE R_FORMS SET FORM_STATUS = 'Declined',"
 				+ "APPROVE_GRADE = 'Rejected',"
 				+ "REJECTION_JUSTIFY = 'Not a passing Grade' "
 				+ "WHERE ID ="+sc.getRfId();
-				sendMessage(sc, "Reienbursement from form #"+sc.getRfId()+" has been denied"+"\n"+sc.getReason());
+				sendMessage(sc, "Reienbursement from form #"+sc.getRfId()+" has been denied");
 				break;
 			default:
 				break;
@@ -228,7 +245,17 @@ public class RFormDAOImpl implements RFormDAO {
 				+ "Head_SUBMIT_DATE = CURRENT_TIMESTAMP,"
 				+ "REJECTION_JUSTIFY = '"+sc.getReason()+"', "
 				+ "FORM_STATUS = 'Denied' WHERE ID ="+sc.getRfId();
-				sendMessage(sc, "Head Manager "+sc.getAprId()+" approved form #"+sc.getRfId()+sc.getReason());
+				sendMessage(sc, "Head Manager "+sc.getAprId()+" delined form #"+sc.getRfId());
+				break;
+			case "AcceptBenCoOffer": 
+			sql = "UPDATE R_FORMS SET ALTERED_FORM = 'Approved',"
+				+ "FORM_STATUS = 'In-review' WHERE ID ="+sc.getRfId();
+				sendMessageToBenCo(sc, "Associate "+sc.getAprId()+" accepted alternate offer on form #"+sc.getRfId());
+				break;
+			case "DeclineBenCoOffer":
+			sql = "UPDATE R_FORMS SET ALTERED_FORM = 'Declined',"
+				+ "FORM_STATUS = 'Canceled' WHERE ID ="+sc.getRfId();
+				sendMessageToBenCo(sc, "Associate "+sc.getAprId()+" delined alternate offer on form #"+sc.getRfId());
 				break;
 			default:
 				break;
@@ -248,24 +275,26 @@ public class RFormDAOImpl implements RFormDAO {
 				+ "COORDINATOR_SUBMIT_DATE = CURRENT_TIMESTAMP,"
 				+ "REJECTION_JUSTIFY = '"+sc.getReason()+"', "
 				+ "FORM_STATUS = 'Denied' WHERE ID ="+sc.getRfId();
-				sendMessage(sc, "Benefits Coordinator "+sc.getAprId()+" declined form #"+sc.getRfId()+"\n"+sc.getReason());
+				sendMessage(sc, "Benefits Coordinator "+sc.getAprId()+" declined form #"+sc.getRfId());
 				break;
 			case "AcceptBenCoOffer": 
 			sql = "UPDATE R_FORMS SET ALTERED_FORM = 'Approved',"
 				+ "FORM_STATUS = 'In-review' WHERE ID ="+sc.getRfId();
-				sendMessage(sc, "Associate "+sc.getAprId()+" accepted alternate offer on form #"+sc.getRfId());
+				sendMessageToBenCo(sc, "Associate "+sc.getAprId()+" accepted alternate offer on form #"+sc.getRfId());
 				break;
 			case "DeclineBenCoOffer":
 			sql = "UPDATE R_FORMS SET ALTERED_FORM = 'Declined',"
 				+ "FORM_STATUS = 'Canceled' WHERE ID ="+sc.getRfId();
-				sendMessage(sc, "Associate "+sc.getAprId()+" delined alternate offer on form #"+sc.getRfId());
+				sendMessageToBenCo(sc, "Associate "+sc.getAprId()+" delined alternate offer on form #"+sc.getRfId());
 				break;
-			case "SubmitFinalGrade": 
+			case "SubmitFinalGrade":
+				//send message to supervisor
 			sql = "UPDATE R_FORMS SET ON_FINISH_GRADE = "+sc.getReason()
 				+ " WHERE ID ="+sc.getRfId();
 				sendMessage(sc, "Associate "+sc.getAprId()+" submitted final grade "+sc.getReason()+" for form #"+sc.getRfId());
 				break;
 			case "SubmitFinalPres":
+				//send message to BenCo
 			sql = "UPDATE R_FORMS SET ON_FINISH_PRESENTATION = '"+sc.getReason()
 				+ "' WHERE ID ="+sc.getRfId();
 				sendMessage(sc, "Associate "+sc.getAprId()+" submitted final presentation for form #"+sc.getRfId());
@@ -277,17 +306,17 @@ public class RFormDAOImpl implements RFormDAO {
 				sendMessage(sc, "Reienbursement from form #"+sc.getRfId()+" has been awarded");
 				break;
 			case "RejectPres":
-			sql = "UPDATE R_FORMS SET FORM_STATUS = 'Rejected',"
+			sql = "UPDATE R_FORMS SET FORM_STATUS = 'Declined',"
 				+ "APPROVE_PRESENTATION = 'Rejected',"
 				+ "REJECTION_JUSTIFY = 'Not a passing Presentation' "
 				+ "WHERE ID ="+sc.getRfId();
-				sendMessage(sc, "Reienbursement from form #"+sc.getRfId()+" has been denied"+"\n"+sc.getReason());
+				sendMessage(sc, "Reienbursement from form #"+sc.getRfId()+" has been denied");
 				break;
 			case "AlterForm": 
 			sql = "UPDATE R_FORMS SET ALTERED_FORM = 'True', "
 				+ "PENDING_REIMBURSEMENT = "+sc.getReason()
 				+ "WHERE ID ="+sc.getRfId();
-				sendMessage(sc, "Benefits Coordinator#"+sc.getAprId()+" has altered form "+sc.getRfId()+"\nPlease review the new offer");
+				sendMessage(sc, "Benefits Coordinator#"+sc.getAprId()+" has altered form "+sc.getRfId());
 				break;	
 			default:
 				break;
@@ -329,8 +358,11 @@ public class RFormDAOImpl implements RFormDAO {
 		case "Head": filter = " AND r_forms.approve_supervisor = 'Approved' AND r_forms.approve_head IS NULL"; break;
 		case "Associate": 
 			if(em.getDepartment().equals("Benefits")) {
-				filter = "AND r_forms.approve_head = 'Approved'"; 
-			} else filter = "AND r_forms.approve_head = 'Not a Manager'";break;
+				filter = " AND " + 
+						"(R_FORMS.FORM_STATUS = 'In-review' AND r_forms.approve_head = 'Approved') " + 
+						"OR " + 
+						"(R_FORMS.FORM_STATUS = 'Pending' AND R_FORMS.GRADING_FORMAT_ID >3)"; 
+			} else filter = " AND r_forms.approve_head = 'Not a Manager'";break;
 		default: break;
 		}
 

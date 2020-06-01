@@ -25,7 +25,7 @@ public class MessageDAOImpl implements MessageDAO {
 		call.setInt(1, m.getSendID());
 		call.setInt(2, m.getRecID());
 		call.setInt(3, m.getFormID());
-		call.setString(4, m.getMessage());
+		call.setString(4, "Sender: "+m.getSendID()+" Form: "+m.getFormID()+" : "+m.getMessage());
 		call.execute();
 		call.close();
 		conn.close();
