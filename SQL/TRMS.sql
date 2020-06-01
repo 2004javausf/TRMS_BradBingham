@@ -75,6 +75,15 @@ INSERT INTO GRADING_FORMAT VALUES(3,'>70%');
 INSERT INTO GRADING_FORMAT VALUES(4,'Presentation');
 INSERT INTO GRADING_FORMAT VALUES(5,'In description');
 ------------------------------------
+--Constraints
+ALTER TABLE R_FORMS
+ADD CONSTRAINT FK_R_FORMS_EMPLOYEE_ID
+FOREIGN KEY(EMPLOYEE_ID) REFERENCES EMPLOYEES(ID);
+
+ALTER TABLE R_FORMS
+ADD CONSTRAINT FK_R_FORMS_GRADING_FORMAT
+FOREIGN KEY(GRADING_FORMAT_ID) REFERENCES GRADING_FORMAT(ID);
+------------------------------------
 --PROCEEDURES
 
 CREATE OR REPLACE PROCEDURE INSERT_EMPLOYEE
@@ -195,18 +204,4 @@ CREATE SEQUENCE R_FORM_SEQ
 EXECUTE INSERT_R_FORM(1,'01-MAY-2021','1 AM','Leader School',1000,800,'School for leader','I will lead better',2,'University Course',NULL,null,null,null,null,null);
 
 
-
-
 -----------------------------------------------------------
-SELECT * FROM R_FORMS INNER JOIN EMPLOYEES ON (R_FORMS.EMPLOYEE_ID = EMPLOYEES.ID) 
-WHERE OFFICE_LOC = 'Main'AND DEPARTMENT = 'IT' AND (r_forms.approve_supervisor IS NULL OR r_forms.form_status = 'Pending');
-
-SELECT * FROM R_FORMS INNER JOIN EMPLOYEES ON (R_FORMS.EMPLOYEE_ID = EMPLOYEES.ID) 
-WHERE Employees.OFFICE_LOC = 'Main' 
-AND
-(R_FORMS.FORM_STATUS = 'In-review' AND r_forms.approve_head = 'Approved')
-OR
-(R_FORMS.FORM_STATUS = 'Pending' AND R_FORMS.GRADING_FORMAT_ID >3);
-
-
-UPDATE R_FORMS SET APPROVE_Supervisor = 'Declined',Supervisor_SUBMIT_DATE = CURRENT_TIMESTAMP, REJECTION_JUSTIFY = 'here is my reason', FORM_STATUS = 'Denied' WHERE ID =4

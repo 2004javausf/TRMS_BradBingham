@@ -10,8 +10,6 @@ import { Rform } from "../templates/rform";
 import { StatusService } from "../status.service";
 import { IfStmt, ThrowStmt } from "@angular/compiler";
 
-//TODO: make a links conditional style active/hover
-
 @Component({
   selector: "dashboard",
   templateUrl: "./dashboard.component.html",
@@ -25,6 +23,7 @@ export class DashboardComponent implements OnInit {
   user: Employee;
   availableReinbursement: number;
   options: number = 0;
+
   onOptionChange($event) {
     this.options = $event.target.value;
   }
@@ -45,6 +44,11 @@ export class DashboardComponent implements OnInit {
     private systemService: SystemService
   ) {}
 
+  updateDaily() {
+    this.updateDailyDate();
+    this.updateDailyForm();
+  }
+
   updateDailyDate() {
     let d: Date = new Date();
 
@@ -53,7 +57,7 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-  updateIncomingForm() {
+  updateDailyForm() {
     this.forms.forEach((x) => {
       let sup = x.formSubDate;
       let head = x.supSubDate;
@@ -154,8 +158,6 @@ export class DashboardComponent implements OnInit {
           }
         });
       }
-      //TODO: update manage forms to correct location
-      // this.updateIncomingForm();
       this.loggedIn = true;
     }
     if (toThis == "login") {

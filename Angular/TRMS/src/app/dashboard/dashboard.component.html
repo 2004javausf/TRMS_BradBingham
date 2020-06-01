@@ -46,7 +46,7 @@
   <h3>Tuition Reimbursement Management System</h3>
   <div class="header row">
     <div class="col75">
-      <h4>Welcome {{ user.firstName }} {{ user.lastName }}</h4>
+      <h4 id="welcome">Welcome {{ user.firstName }} {{ user.lastName }}</h4>
       <a (click)="displayChange('forms')">My Forms</a>
       <a (click)="displayChange('newForm')">New Form</a>
       <a
@@ -153,7 +153,7 @@
         <div class="row">
           <div class="formElement">
             <label for="startDate">Start date </label> <br />
-            <input disabled [value]="focus.startDate" />
+            <input disabled [value]="focus.startDate.substr(0, 10)" />
           </div>
 
           <div class="formElement">
