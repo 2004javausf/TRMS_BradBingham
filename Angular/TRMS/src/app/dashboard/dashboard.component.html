@@ -47,9 +47,27 @@
   <div class="header row">
     <div class="col75">
       <h4 id="welcome">Welcome {{ user.firstName }} {{ user.lastName }}</h4>
-      <a (click)="displayChange('forms')">My Forms</a>
-      <a (click)="displayChange('newForm')">New Form</a>
       <a
+        [ngClass]="{
+          active:
+            display == 'forms' || (display == 'focus' && focus.empID == user.id)
+        }"
+        (click)="displayChange('forms')"
+        >My Forms</a
+      >
+      <a
+        [ngClass]="{
+          active: display == 'newForm'
+        }"
+        (click)="displayChange('newForm')"
+        >New Form</a
+      >
+      <a
+        [ngClass]="{
+          active:
+            display == 'manage' ||
+            (display == 'focus' && focus.empID != user.id)
+        }"
         *ngIf="user.title != 'Associate' || user.department == 'Benefits'"
         (click)="displayChange('manage')"
         >Manage</a
@@ -65,8 +83,8 @@
   <!-- myforms -->
   <div *ngIf="display == 'forms'" class="row">
     <ul class="col">
-      <h4 class="listTitle">list for submitted forms</h4>
-      <li *ngIf="forms.length == 0">{{ myFormsMessage }}</li>
+      <h4 class="listTitle">Submitted forms</h4>
+      <li class="noInput" *ngIf="forms.length == 0">{{ myFormsMessage }}</li>
       <li *ngFor="let item of forms">
         <div class="btnBox">
           <button (click)="focusOn(item)">View</button>
@@ -76,8 +94,10 @@
       </li>
     </ul>
     <ul class="col">
-      <h4 class="listTitle">list for messages</h4>
-      <li *ngIf="messages.length == 0">{{ myMessagesMessage }}</li>
+      <h4 class="listTitle">Messages</h4>
+      <li class="noInput" *ngIf="messages.length == 0">
+        {{ myMessagesMessage }}
+      </li>
       <li *ngFor="let item of messages">
         <div class="btnBox">
           <button (click)="remove(item)">X</button>
@@ -96,6 +116,7 @@
       <li *ngFor="let item of manageForms">
         <div class="btnBox">
           <button (click)="focusOn(item)">View</button>
+          {{ item.formSubDate.substr(5, 5) }}
         </div>
         <div class="msgBox">ID: {{ item.id }} Status: {{ item.status }}</div>
       </li>
@@ -153,24 +174,28 @@
         <div class="row">
           <div class="formElement">
             <label for="startDate">Start date </label> <br />
-            <input disabled [value]="focus.startDate.substr(0, 10)" />
+            <input
+              disabled
+              class="disabled"
+              [value]="focus.startDate.substr(0, 10)"
+            />
           </div>
 
           <div class="formElement">
             <label for="startTime">Start time </label> <br />
-            <input disabled [value]="focus.startTime" />
+            <input disabled class="disabled" [value]="focus.startTime" />
           </div>
         </div>
 
         <div class="formElement">
           <label for="location">Location </label> <br />
-          <input disabled [value]="focus.location" />
+          <input disabled class="disabled" [value]="focus.location" />
         </div>
 
         <div class="row">
           <div class="formElement">
             <label for="cost">Event cost </label> <br />
-            <input disabled [value]="focus.cost" />
+            <input disabled class="disabled" [value]="focus.cost" />
           </div>
           <div
             *ngIf="focus.isAltered == 'True'"
@@ -183,7 +208,7 @@
 
           <div class="formElement" *ngIf="focus.isAltered != 'True'">
             <label for="return">Estimated return</label> <br />
-            <input disabled [value]="focus.pendingRe" />
+            <input disabled class="disabled" [value]="focus.pendingRe" />
           </div>
         </div>
 
@@ -192,6 +217,7 @@
             <label for="gradingFormat">Grading Format </label> <br />
             <input
               disabled
+              class="disabled"
               [value]="gradingFormat(focus.gradeFormatID)"
               type="text"
             />
@@ -199,7 +225,12 @@
 
           <div class="formElement col">
             <label>Event type </label> <br />
-            <input disabled [value]="eventType(focus.eventType)" type="text" />
+            <input
+              disabled
+              class="disabled"
+              [value]="eventType(focus.eventType)"
+              type="text"
+            />
           </div>
         </div>
 
@@ -207,6 +238,7 @@
           <label for="description">Description </label> <br />
           <textarea
             disabled
+            class="disabled"
             [placeholder]="focus.description"
             cols="30"
             rows="5"
@@ -218,6 +250,7 @@
             >Work related justification
             <textarea
               disabled
+              class="disabled"
               [placeholder]="focus.justification"
               cols="30"
               rows="5"
